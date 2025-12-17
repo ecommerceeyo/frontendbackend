@@ -1,0 +1,125 @@
+import { orderService } from './order.service';
+import { successResponse, paginatedResponse } from '../../utils/response';
+/**
+ * Create order from checkout (public)
+ */
+export async function checkout(req, res, next) {
+    try {
+        const order = await orderService.checkout(req.body);
+        return successResponse(res, order, 'Order placed successfully', 201);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+/**
+ * Track order (public)
+ */
+export async function trackOrder(req, res, next) {
+    try {
+        const { orderNumber, phone, email } = req.query;
+        const orders = await orderService.trackOrder({
+            orderNumber: orderNumber,
+            phone: phone,
+            email: email,
+        });
+        return successResponse(res, orders);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+/**
+ * Get order by ID (public - limited info)
+ */
+export async function getOrder(req, res, next) {
+    try {
+        const order = await orderService.getOrderById(req.params.id);
+        // Return limited info for public access
+        return successResponse(res, {
+            orderNumber: order.orderNumber,
+            status: order.paymentStatus,
+            deliveryStatus: order.deliveryStatus,
+            items: order.itemsSnapshot,
+            subtotal: order.subtotal,
+            deliveryFee: order.deliveryFee,
+            total: order.total,
+            currency: order.currency,
+            createdAt: order.createdAt,
+            delivery: order.delivery
+                ? {
+                    status: order.delivery.status,
+                    trackingNumber: order.delivery.trackingNumber,
+                    estimatedDate: order.delivery.estimatedDate,
+                }
+                : null,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+// ============================================
+// ADMIN CONTROLLERS
+// ============================================
+/**
+ * Get paginated list of orders (admin)
+ */
+export async function getOrders(req, res, next) {
+    try {
+        const { orders, total, page, limit } = await orderService.getOrders(req.query);
+        return paginatedResponse(res, orders, page, limit, total);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+/**
+ * Get order by ID (admin - full info)
+ */
+export async function getOrderAdmin(req, res, next) {
+    try {
+        const order = await orderService.getOrderById(req.params.id);
+        return successResponse(res, order);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+/**
+ * Update order status (admin)
+ */
+export async function updateOrderStatus(req, res, next) {
+    try {
+        const order = await orderService.updateOrderStatus(req.params.id, req.body);
+        return successResponse(res, order, 'Order status updated');
+    }
+    catch (error) {
+        next(error);
+    }
+}
+/**
+ * Mark order as shipped (admin)
+ */
+export async function markAsShipped(req, res, next) {
+    try {
+        const order = await orderService.markAsShipped(req.params.id, req.body);
+        return successResponse(res, order, 'Order marked as shipped');
+    }
+    catch (error) {
+        next(error);
+    }
+}
+/**
+ * Generate invoice (admin)
+ */
+export async function generateInvoice(req, res, next) {
+    try {
+        const result = await orderService.generateInvoice(req.params.id);
+        return successResponse(res, result);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+//# sourceMappingURL=order.controller.js.map

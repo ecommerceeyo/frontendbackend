@@ -1,0 +1,646 @@
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:58 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:34:59 [info]: Database connected successfully
+2025-12-02 23:34:59 [info]: Email worker started
+2025-12-02 23:34:59 [info]: SMS worker started
+2025-12-02 23:34:59 [info]: WhatsApp worker started
+2025-12-02 23:34:59 [info]: PDF worker started
+2025-12-02 23:34:59 [info]: Notification workers started
+2025-12-02 23:34:59 [info]: Server running on port 4000 in development mode
+2025-12-02 23:34:59 [info]: API available at http://localhost:4000/api
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:00 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:01 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:02 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:03 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:04 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:05 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:06 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:09 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:37 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:35:57 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:17 [error]: ReplyError: NOAUTH Authentication required.
+    at parseError (/app/node_modules/redis-parser/lib/parser.js:179:12)
+    at parseType (/app/node_modules/redis-parser/lib/parser.js:302:14)
+2025-12-02 23:36:24 [info]: Received SIGTERM. Starting graceful shutdown...
+2025-12-02 23:36:24 [info]: Database connection closed
+2025-12-02 23:36:26 [info]: Database connected successfully
+2025-12-02 23:36:26 [info]: Email worker started
+2025-12-02 23:36:26 [info]: SMS worker started
+2025-12-02 23:36:26 [info]: WhatsApp worker started
+2025-12-02 23:36:26 [info]: PDF worker started
+2025-12-02 23:36:26 [info]: Notification workers started
+2025-12-02 23:36:26 [info]: Server running on port 4000 in development mode
+2025-12-02 23:36:26 [info]: API available at http://localhost:4000/api
+2025-12-02 23:36:29 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:36:29 +0000] "GET /api/products?featured=true&limit=20 HTTP/1.1" 200 102 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:36:40 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:36:40 +0000] "GET /api/products?limit=20 HTTP/1.1" 200 102 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:36:40 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:36:40 +0000] "GET /api/products/featured HTTP/1.1" 200 26 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:38:09 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:38:09 +0000] "GET /api/products?featured=true&limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:38:12 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:38:12 +0000] "GET /api/products?limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:38:12 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:38:12 +0000] "GET /api/products/featured HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:39:32 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:39:32 +0000] "GET /api/products?limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:39:32 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:39:32 +0000] "GET /api/products/featured HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:39:39 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:39:39 +0000] "GET /api/products?featured=true&limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:41:10 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:41:10 +0000] "GET / HTTP/1.1" 200 90 "-" "curl/8.14.1"
+2025-12-02 23:41:17 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:41:17 +0000] "GET /api/products?limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:41:17 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:41:17 +0000] "GET /api/products/featured HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-02 23:41:19 [info]: ::ffff:172.22.0.1 - - [02/Dec/2025:23:41:19 +0000] "GET /api/products?featured=true&limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:05:44 [info]: Database connected successfully
+2025-12-03 15:05:44 [info]: Email worker started
+2025-12-03 15:05:44 [info]: SMS worker started
+2025-12-03 15:05:44 [info]: WhatsApp worker started
+2025-12-03 15:05:44 [info]: PDF worker started
+2025-12-03 15:05:44 [info]: Notification workers started
+2025-12-03 15:05:44 [info]: Server running on port 4000 in development mode
+2025-12-03 15:05:44 [info]: API available at http://localhost:4000/api
+2025-12-03 15:06:41 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:06:41 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:06:41 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:06:41 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:06:43 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:06:43 +0000] "GET /api/products?limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:06:43 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:06:43 +0000] "GET /api/products/featured HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:06:43 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:06:43 +0000] "GET /api/categories HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:01 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:01 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:01 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:01 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:09 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:09 +0000] "POST /api/auth/login HTTP/1.1" 200 438 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:19 [error]: Error: Product not found
+    at ProductService.getProductById (/app/src/modules/products/product.service.ts:192:13)
+    at async getProductAdmin (/app/src/modules/products/product.controller.ts:140:21)
+2025-12-03 15:07:19 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:19 +0000] "GET /api/admin/products/inventory-logs?limit=50 HTTP/1.1" 404 45 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:19 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:19 +0000] "GET /api/admin/products/low-stock HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:19 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:19 +0000] "GET /api/admin/products?limit=100 HTTP/1.1" 200 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:19 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:19 +0000] "GET /api/admin/products/low-stock HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:19 [error]: Error: Product not found
+    at ProductService.getProductById (/app/src/modules/products/product.service.ts:192:13)
+    at async getProductAdmin (/app/src/modules/products/product.controller.ts:140:21)
+2025-12-03 15:07:19 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:19 +0000] "GET /api/admin/products/inventory-logs?limit=50 HTTP/1.1" 404 45 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:19 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:19 +0000] "GET /api/admin/products?limit=100 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:51 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:51 +0000] "GET /api/admin/products?page=1&limit=10 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 15:07:51 [info]: ::ffff:172.21.0.1 - - [03/Dec/2025:15:07:51 +0000] "GET /api/admin/products?page=1&limit=10 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-03 17:24:01 [info]: Received SIGTERM. Starting graceful shutdown...
+2025-12-04 12:57:37 [info]: Database connected successfully
+2025-12-04 12:57:37 [info]: Email worker started
+2025-12-04 12:57:37 [info]: SMS worker started
+2025-12-04 12:57:37 [info]: WhatsApp worker started
+2025-12-04 12:57:37 [info]: PDF worker started
+2025-12-04 12:57:37 [info]: Notification workers started
+2025-12-04 12:57:37 [info]: Server running on port 4000 in development mode
+2025-12-04 12:57:37 [info]: API available at http://localhost:4000/api
+2025-12-04 16:03:21 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:03:21 +0000] "GET /api/categories HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:03:21 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:03:21 +0000] "GET /api/products/featured HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:03:21 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:03:21 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:03:21 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:03:21 +0000] "GET /api/products?limit=20 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:03:21 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:03:21 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:03:41 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:03:41 +0000] "GET /api/products/indoor-plant-set HTTP/1.1" 200 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:04:05 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:04:05 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:04:05 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:04:05 +0000] "GET /api/cart/AIxnSZ8KQJ1lqWey9WEU3 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:04:49 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:04:49 +0000] "POST /api/auth/login HTTP/1.1" 200 438 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:04:55 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:04:55 +0000] "GET /api/admin/products?page=1&limit=10 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:04:55 [info]: ::ffff:172.21.0.1 - - [04/Dec/2025:16:04:55 +0000] "GET /api/admin/products?page=1&limit=10 HTTP/1.1" 304 - "http://localhost:3000/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+2025-12-04 16:44:43 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:43 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:43 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:43 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:54 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:54 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:54 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:44:54 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:05 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:05 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:05 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:05 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:16 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:16 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:16 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:16 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:27 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:27 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:27 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:27 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:38 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:38 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:38 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:38 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:49 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:49 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:49 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:45:49 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:02 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:02 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:02 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:02 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:20 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:20 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:20 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:20 [error]: Error: connect ETIMEDOUT
+    at Socket.<anonymous> (/app/node_modules/ioredis/built/Redis.js:171:41)
+    at Object.onceWrapper (node:events:638:28)
+    at Socket.emit (node:events:524:28)
+    at Socket._onTimeout (node:net:595:8)
+    at listOnTimeout (node:internal/timers:581:17)
+    at process.processTimers (node:internal/timers:519:7)
+2025-12-04 16:46:39 [info]: Received SIGTERM. Starting graceful shutdown...
