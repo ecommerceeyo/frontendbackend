@@ -1,12 +1,18 @@
-import prisma from '../../config/database';
-import { slugify, parsePaginationParams } from '../../utils/helpers';
-import { NotFoundError } from '../../middleware/errorHandler';
-export class ProductService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.productService = exports.ProductService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class ProductService {
     /**
      * Get paginated list of products (public)
      */
     async getProducts(params) {
-        const { page, limit, skip, sortBy, sortOrder } = parsePaginationParams(params);
+        const { page, limit, skip, sortBy, sortOrder } = (0, helpers_1.parsePaginationParams)(params);
         const where = {
             active: params.includeInactive ? undefined : true,
         };
@@ -54,7 +60,7 @@ export class ProductService {
             ];
         }
         const [products, total] = await Promise.all([
-            prisma.product.findMany({
+            database_1.default.product.findMany({
                 where,
                 include: {
                     categories: {
@@ -78,7 +84,7 @@ export class ProductService {
                 skip,
                 take: limit,
             }),
-            prisma.product.count({ where }),
+            database_1.default.product.count({ where }),
         ]);
         return { products, total, page, limit };
     }
@@ -86,7 +92,7 @@ export class ProductService {
      * Get single product by ID or slug
      */
     async getProductByIdOrSlug(idOrSlug) {
-        const product = await prisma.product.findFirst({
+        const product = await database_1.default.product.findFirst({
             where: {
                 OR: [{ id: idOrSlug }, { slug: idOrSlug }],
                 active: true,
@@ -112,7 +118,7 @@ export class ProductService {
             },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         return product;
     }
@@ -120,7 +126,7 @@ export class ProductService {
      * Get product by ID (admin - includes inactive)
      */
     async getProductById(id) {
-        const product = await prisma.product.findUnique({
+        const product = await database_1.default.product.findUnique({
             where: { id },
             include: {
                 categories: {
@@ -140,7 +146,7 @@ export class ProductService {
             },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         return product;
     }
@@ -148,15 +154,15 @@ export class ProductService {
      * Create a new product
      */
     async createProduct(data) {
-        const slug = data.slug || slugify(data.name);
+        const slug = data.slug || (0, helpers_1.slugify)(data.name);
         // Check if slug exists
-        const existingProduct = await prisma.product.findUnique({
+        const existingProduct = await database_1.default.product.findUnique({
             where: { slug },
         });
         if (existingProduct) {
             throw new Error('A product with this slug already exists');
         }
-        const product = await prisma.product.create({
+        const product = await database_1.default.product.create({
             data: {
                 name: data.name,
                 slug,
@@ -232,19 +238,19 @@ export class ProductService {
      * Update a product
      */
     async updateProduct(id, data) {
-        const existingProduct = await prisma.product.findUnique({
+        const existingProduct = await database_1.default.product.findUnique({
             where: { id },
         });
         if (!existingProduct) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         // Handle slug update
         let slug = data.slug;
         if (data.name && !data.slug) {
-            slug = slugify(data.name);
+            slug = (0, helpers_1.slugify)(data.name);
         }
         if (slug && slug !== existingProduct.slug) {
-            const slugExists = await prisma.product.findFirst({
+            const slugExists = await database_1.default.product.findFirst({
                 where: { slug, NOT: { id } },
             });
             if (slugExists) {
@@ -252,7 +258,7 @@ export class ProductService {
             }
         }
         // Update product in a transaction with extended timeout for complex updates
-        const product = await prisma.$transaction(async (tx) => {
+        const product = await database_1.default.$transaction(async (tx) => {
             // Update categories if provided
             if (data.categoryIds !== undefined) {
                 await tx.productCategory.deleteMany({ where: { productId: id } });
@@ -353,32 +359,32 @@ export class ProductService {
      * Delete a product
      */
     async deleteProduct(id) {
-        const product = await prisma.product.findUnique({
+        const product = await database_1.default.product.findUnique({
             where: { id },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
-        await prisma.product.delete({ where: { id } });
+        await database_1.default.product.delete({ where: { id } });
         return { success: true };
     }
     /**
      * Update product stock
      */
     async updateStock(id, stock, reason = 'MANUAL', referenceId) {
-        const product = await prisma.product.findUnique({
+        const product = await database_1.default.product.findUnique({
             where: { id },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         const previousStock = product.stock;
-        const [updatedProduct] = await prisma.$transaction([
-            prisma.product.update({
+        const [updatedProduct] = await database_1.default.$transaction([
+            database_1.default.product.update({
                 where: { id },
                 data: { stock },
             }),
-            prisma.inventoryLog.create({
+            database_1.default.inventoryLog.create({
                 data: {
                     productId: id,
                     productName: product.name,
@@ -397,7 +403,7 @@ export class ProductService {
      * Bulk update stock
      */
     async bulkUpdateStock(updates) {
-        const results = await prisma.$transaction(updates.map((update) => prisma.product.update({
+        const results = await database_1.default.$transaction(updates.map((update) => database_1.default.product.update({
             where: { id: update.productId },
             data: { stock: update.stock },
         })));
@@ -407,7 +413,7 @@ export class ProductService {
      * Get featured products
      */
     async getFeaturedProducts(limit = 8) {
-        return prisma.product.findMany({
+        return database_1.default.product.findMany({
             where: { active: true, featured: true },
             include: {
                 images: {
@@ -430,10 +436,10 @@ export class ProductService {
      * Get low stock products
      */
     async getLowStockProducts() {
-        return prisma.product.findMany({
+        return database_1.default.product.findMany({
             where: {
                 active: true,
-                stock: { lte: prisma.product.fields.lowStockThreshold },
+                stock: { lte: database_1.default.product.fields.lowStockThreshold },
             },
             orderBy: { stock: 'asc' },
         });
@@ -442,7 +448,7 @@ export class ProductService {
      * Get inventory logs
      */
     async getInventoryLogs(params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = {};
         if (params.productId) {
             where.productId = params.productId;
@@ -451,16 +457,17 @@ export class ProductService {
             where.reason = params.reason;
         }
         const [logs, total] = await Promise.all([
-            prisma.inventoryLog.findMany({
+            database_1.default.inventoryLog.findMany({
                 where,
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take: limit,
             }),
-            prisma.inventoryLog.count({ where }),
+            database_1.default.inventoryLog.count({ where }),
         ]);
         return { logs, total, page, limit };
     }
 }
-export const productService = new ProductService();
+exports.ProductService = ProductService;
+exports.productService = new ProductService();
 //# sourceMappingURL=product.service.js.map

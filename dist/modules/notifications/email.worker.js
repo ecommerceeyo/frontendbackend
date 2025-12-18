@@ -1,9 +1,16 @@
-import { Worker } from 'bullmq';
-import nodemailer from 'nodemailer';
-import { connection } from '../../config/queue';
-import config from '../../config';
-import logger from '../../utils/logger';
-import { notificationService } from './notification.service';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.emailWorker = void 0;
+exports.startEmailWorker = startEmailWorker;
+const bullmq_1 = require("bullmq");
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const queue_1 = require("../../config/queue");
+const config_1 = __importDefault(require("../../config"));
+const logger_1 = __importDefault(require("../../utils/logger"));
+const notification_service_1 = require("./notification.service");
 // Email templates
 const templates = {
     order_confirmation: (data) => ({
@@ -109,44 +116,44 @@ const templates = {
 };
 // Create transporter
 const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: config.smtp.host,
-        port: config.smtp.port,
-        secure: config.smtp.port === 465,
+    return nodemailer_1.default.createTransport({
+        host: config_1.default.smtp.host,
+        port: config_1.default.smtp.port,
+        secure: config_1.default.smtp.port === 465,
         auth: {
-            user: config.smtp.user,
-            pass: config.smtp.pass,
+            user: config_1.default.smtp.user,
+            pass: config_1.default.smtp.pass,
         },
     });
 };
 // Process email job
 async function processEmail(job) {
     const { to, template, data, orderId } = job.data;
-    logger.info(`Processing email job ${job.id} - Template: ${template}, To: ${to}`);
+    logger_1.default.info(`Processing email job ${job.id} - Template: ${template}, To: ${to}`);
     try {
         const transporter = createTransporter();
         const emailTemplate = templates[template](data);
         await transporter.sendMail({
-            from: `"${config.smtp.fromName}" <${config.smtp.fromEmail}>`,
+            from: `"${config_1.default.smtp.fromName}" <${config_1.default.smtp.fromEmail}>`,
             to,
             subject: emailTemplate.subject,
             html: emailTemplate.html,
         });
         // Log success
-        await notificationService.logNotification('EMAIL', to, emailTemplate.subject, 'SENT', orderId);
-        logger.info(`Email sent successfully: ${job.id}`);
+        await notification_service_1.notificationService.logNotification('EMAIL', to, emailTemplate.subject, 'SENT', orderId);
+        logger_1.default.info(`Email sent successfully: ${job.id}`);
     }
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         // Log failure
-        await notificationService.logNotification('EMAIL', to, job.data.subject, 'FAILED', orderId, errorMessage);
-        logger.error(`Email failed: ${job.id}`, error);
+        await notification_service_1.notificationService.logNotification('EMAIL', to, job.data.subject, 'FAILED', orderId, errorMessage);
+        logger_1.default.error(`Email failed: ${job.id}`, error);
         throw error;
     }
 }
 // Create and export worker
-export const emailWorker = new Worker('email', processEmail, {
-    connection,
+exports.emailWorker = new bullmq_1.Worker('email', processEmail, {
+    connection: queue_1.connection,
     concurrency: 5,
     limiter: {
         max: 10,
@@ -154,16 +161,16 @@ export const emailWorker = new Worker('email', processEmail, {
     },
 });
 // Worker event handlers
-emailWorker.on('completed', (job) => {
-    logger.info(`Email job ${job.id} completed`);
+exports.emailWorker.on('completed', (job) => {
+    logger_1.default.info(`Email job ${job.id} completed`);
 });
-emailWorker.on('failed', (job, err) => {
-    logger.error(`Email job ${job?.id} failed:`, err);
+exports.emailWorker.on('failed', (job, err) => {
+    logger_1.default.error(`Email job ${job?.id} failed:`, err);
 });
-emailWorker.on('error', (err) => {
-    logger.error('Email worker error:', err);
+exports.emailWorker.on('error', (err) => {
+    logger_1.default.error('Email worker error:', err);
 });
-export function startEmailWorker() {
-    logger.info('Email worker started');
+function startEmailWorker() {
+    logger_1.default.info('Email worker started');
 }
 //# sourceMappingURL=email.worker.js.map

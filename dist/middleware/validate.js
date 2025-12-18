@@ -1,9 +1,13 @@
-import { ZodError } from 'zod';
-import { validationErrorResponse } from '../utils/response';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validate = validate;
+exports.validateRequest = validateRequest;
+const zod_1 = require("zod");
+const response_1 = require("../utils/response");
 /**
  * Middleware to validate request data using Zod schemas
  */
-export function validate(schema, target = 'body') {
+function validate(schema, target = 'body') {
     return async (req, res, next) => {
         try {
             const data = req[target];
@@ -12,12 +16,12 @@ export function validate(schema, target = 'body') {
             next();
         }
         catch (error) {
-            if (error instanceof ZodError) {
+            if (error instanceof zod_1.ZodError) {
                 const errors = error.errors.map((e) => ({
                     field: e.path.join('.'),
                     message: e.message,
                 }));
-                return validationErrorResponse(res, errors);
+                return (0, response_1.validationErrorResponse)(res, errors);
             }
             next(error);
         }
@@ -26,7 +30,7 @@ export function validate(schema, target = 'body') {
 /**
  * Middleware to validate multiple targets at once
  */
-export function validateRequest(options) {
+function validateRequest(options) {
     return async (req, res, next) => {
         try {
             const errors = [];
@@ -35,7 +39,7 @@ export function validateRequest(options) {
                     req.body = await options.body.parseAsync(req.body);
                 }
                 catch (error) {
-                    if (error instanceof ZodError) {
+                    if (error instanceof zod_1.ZodError) {
                         errors.push(...error.errors.map((e) => ({
                             field: `body.${e.path.join('.')}`,
                             message: e.message,
@@ -48,7 +52,7 @@ export function validateRequest(options) {
                     req.query = await options.query.parseAsync(req.query);
                 }
                 catch (error) {
-                    if (error instanceof ZodError) {
+                    if (error instanceof zod_1.ZodError) {
                         errors.push(...error.errors.map((e) => ({
                             field: `query.${e.path.join('.')}`,
                             message: e.message,
@@ -61,7 +65,7 @@ export function validateRequest(options) {
                     req.params = await options.params.parseAsync(req.params);
                 }
                 catch (error) {
-                    if (error instanceof ZodError) {
+                    if (error instanceof zod_1.ZodError) {
                         errors.push(...error.errors.map((e) => ({
                             field: `params.${e.path.join('.')}`,
                             message: e.message,
@@ -70,7 +74,7 @@ export function validateRequest(options) {
                 }
             }
             if (errors.length > 0) {
-                return validationErrorResponse(res, errors);
+                return (0, response_1.validationErrorResponse)(res, errors);
             }
             next();
         }

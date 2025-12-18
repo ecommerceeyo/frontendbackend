@@ -1,5 +1,12 @@
-import PDFDocument from 'pdfkit';
-import QRCode from 'qrcode';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.InvoiceGenerator = void 0;
+exports.generateInvoicePdf = generateInvoicePdf;
+const pdfkit_1 = __importDefault(require("pdfkit"));
+const qrcode_1 = __importDefault(require("qrcode"));
 // Color palette
 const COLORS = {
     primary: '#1a365d',
@@ -13,7 +20,7 @@ const COLORS = {
     text: '#1a202c',
     textMuted: '#718096',
 };
-export class InvoiceGenerator {
+class InvoiceGenerator {
     doc;
     order;
     company;
@@ -35,7 +42,7 @@ export class InvoiceGenerator {
         this.margin = 50;
         this.pageWidth = 595.28; // A4 width in points
         this.contentWidth = this.pageWidth - this.margin * 2;
-        this.doc = new PDFDocument({
+        this.doc = new pdfkit_1.default({
             size: 'A4',
             margin: this.margin,
             bufferPages: true,
@@ -285,7 +292,7 @@ export class InvoiceGenerator {
         const qrUrl = this.options.qrCodeUrl ||
             `${process.env.FRONTEND_URL}/track/${this.order.orderNumber}`;
         try {
-            const qrDataUrl = await QRCode.toDataURL(qrUrl, {
+            const qrDataUrl = await qrcode_1.default.toDataURL(qrUrl, {
                 width: 80,
                 margin: 1,
                 color: {
@@ -371,7 +378,8 @@ export class InvoiceGenerator {
         }
     }
 }
-export async function generateInvoicePdf(order, company, options) {
+exports.InvoiceGenerator = InvoiceGenerator;
+async function generateInvoicePdf(order, company, options) {
     const generator = new InvoiceGenerator(order, company, options);
     return generator.generate();
 }

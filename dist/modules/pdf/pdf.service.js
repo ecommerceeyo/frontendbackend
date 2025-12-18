@@ -1,9 +1,15 @@
-import prisma from '../../config/database';
-import { supabase, STORAGE_BUCKET, isSupabaseConfigured } from '../../config/supabase';
-import logger from '../../utils/logger';
-import { generateInvoicePdf } from './invoice.generator';
-import { generateDeliveryNotePdf } from './delivery-note.generator';
-export class PdfService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.pdfService = exports.PdfService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const supabase_1 = require("../../config/supabase");
+const logger_1 = __importDefault(require("../../utils/logger"));
+const invoice_generator_1 = require("./invoice.generator");
+const delivery_note_generator_1 = require("./delivery-note.generator");
+class PdfService {
     getCompanyInfo() {
         return {
             name: process.env.COMPANY_NAME || 'E-Commerce Store',
@@ -20,7 +26,7 @@ export class PdfService {
         const order = await this.getOrderData(orderId);
         const company = this.getCompanyInfo();
         // Generate PDF
-        const pdfBuffer = await generateInvoicePdf(order, company, {
+        const pdfBuffer = await (0, invoice_generator_1.generateInvoicePdf)(order, company, {
             ...options,
             qrCodeUrl: `${process.env.FRONTEND_URL}/track/${order.orderNumber}`,
         });
@@ -28,11 +34,11 @@ export class PdfService {
         const filename = `invoice-${order.orderNumber}.pdf`;
         const uploadResult = await this.uploadToSupabase(pdfBuffer, filename, 'invoices');
         // Update order with invoice URL
-        await prisma.order.update({
+        await database_1.default.order.update({
             where: { id: orderId },
             data: { invoiceUrl: uploadResult.url },
         });
-        logger.info(`Invoice generated for order ${order.orderNumber}: ${uploadResult.url}`);
+        logger_1.default.info(`Invoice generated for order ${order.orderNumber}: ${uploadResult.url}`);
         return uploadResult.url;
     }
     /**
@@ -42,7 +48,7 @@ export class PdfService {
         const order = await this.getOrderData(orderId);
         const company = this.getCompanyInfo();
         // Generate PDF
-        const pdfBuffer = await generateDeliveryNotePdf(order, company, {
+        const pdfBuffer = await (0, delivery_note_generator_1.generateDeliveryNotePdf)(order, company, {
             ...options,
             qrCodeUrl: `${process.env.FRONTEND_URL}/track/${order.orderNumber}`,
         });
@@ -50,11 +56,11 @@ export class PdfService {
         const filename = `delivery-note-${order.orderNumber}.pdf`;
         const uploadResult = await this.uploadToSupabase(pdfBuffer, filename, 'delivery-notes');
         // Update order with delivery note URL
-        await prisma.order.update({
+        await database_1.default.order.update({
             where: { id: orderId },
             data: { deliveryNoteUrl: uploadResult.url },
         });
-        logger.info(`Delivery note generated for order ${order.orderNumber}: ${uploadResult.url}`);
+        logger_1.default.info(`Delivery note generated for order ${order.orderNumber}: ${uploadResult.url}`);
         return uploadResult.url;
     }
     /**
@@ -72,7 +78,7 @@ export class PdfService {
      */
     async regenerateInvoice(orderId) {
         // Delete old invoice if exists
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
             select: { invoiceUrl: true, orderNumber: true },
         });
@@ -85,7 +91,7 @@ export class PdfService {
      * Get order data for PDF generation
      */
     async getOrderData(orderId) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
             include: {
                 payment: true,
@@ -138,24 +144,24 @@ export class PdfService {
      * Upload PDF buffer to Supabase Storage
      */
     async uploadToSupabase(buffer, filename, folder) {
-        if (!isSupabaseConfigured()) {
+        if (!(0, supabase_1.isSupabaseConfigured)()) {
             throw new Error('Supabase Storage is not configured');
         }
         const filePath = `documents/${folder}/${filename}`;
-        const { data, error } = await supabase.storage
-            .from(STORAGE_BUCKET)
+        const { data, error } = await supabase_1.supabase.storage
+            .from(supabase_1.STORAGE_BUCKET)
             .upload(filePath, buffer, {
             contentType: 'application/pdf',
             cacheControl: '3600',
             upsert: true,
         });
         if (error) {
-            logger.error('Supabase PDF upload error:', error);
+            logger_1.default.error('Supabase PDF upload error:', error);
             throw new Error(`Failed to upload PDF: ${error.message}`);
         }
         // Get public URL
-        const { data: urlData } = supabase.storage
-            .from(STORAGE_BUCKET)
+        const { data: urlData } = supabase_1.supabase.storage
+            .from(supabase_1.STORAGE_BUCKET)
             .getPublicUrl(filePath);
         return {
             url: urlData.publicUrl,
@@ -167,7 +173,7 @@ export class PdfService {
      */
     async deleteFromSupabase(url) {
         try {
-            if (!isSupabaseConfigured()) {
+            if (!(0, supabase_1.isSupabaseConfigured)()) {
                 return;
             }
             // Extract file path from URL
@@ -175,18 +181,19 @@ export class PdfService {
             const pathMatch = urlObj.pathname.match(/\/storage\/v1\/object\/public\/[^/]+\/(.+)/);
             if (pathMatch) {
                 const filePath = pathMatch[1];
-                const { error } = await supabase.storage
-                    .from(STORAGE_BUCKET)
+                const { error } = await supabase_1.supabase.storage
+                    .from(supabase_1.STORAGE_BUCKET)
                     .remove([filePath]);
                 if (error) {
-                    logger.error('Failed to delete PDF from Supabase:', error);
+                    logger_1.default.error('Failed to delete PDF from Supabase:', error);
                 }
             }
         }
         catch (error) {
-            logger.error('Failed to delete PDF from Supabase:', error);
+            logger_1.default.error('Failed to delete PDF from Supabase:', error);
         }
     }
 }
-export const pdfService = new PdfService();
+exports.PdfService = PdfService;
+exports.pdfService = new PdfService();
 //# sourceMappingURL=pdf.service.js.map

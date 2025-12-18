@@ -1,37 +1,42 @@
-import { Router } from 'express';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
 // Public routes
-import { productRoutes } from '../modules/products';
-import { cartRoutes } from '../modules/cart';
-import { orderRoutes } from '../modules/orders';
-import { categoryRoutes } from '../modules/categories';
-import { supplierRoutes } from '../modules/suppliers';
+const products_1 = require("../modules/products");
+const cart_1 = require("../modules/cart");
+const orders_1 = require("../modules/orders");
+const categories_1 = require("../modules/categories");
+const suppliers_1 = require("../modules/suppliers");
 // Payment routes
-import { paymentRoutes } from '../modules/payments';
+const payments_1 = require("../modules/payments");
 // Auth routes
-import { authRoutes } from '../modules/auth';
-import { supplierAuthRoutes } from '../modules/supplier-auth';
-import { customerAuthRoutes } from '../modules/customer-auth';
+const auth_1 = require("../modules/auth");
+const supplier_auth_1 = require("../modules/supplier-auth");
+const customer_auth_1 = require("../modules/customer-auth");
 // Supplier portal routes
-import { supplierPortalRoutes } from '../modules/supplier-portal';
+const supplier_portal_1 = require("../modules/supplier-portal");
 // Admin routes
-import adminRoutes from './admin';
-const router = Router();
+const admin_1 = __importDefault(require("./admin"));
+const router = (0, express_1.Router)();
 // Public API routes
-router.use('/products', productRoutes);
-router.use('/cart', cartRoutes);
-router.use('/orders', orderRoutes);
-router.use('/categories', categoryRoutes);
-router.use('/suppliers', supplierRoutes);
+router.use('/products', products_1.productRoutes);
+router.use('/cart', cart_1.cartRoutes);
+router.use('/orders', orders_1.orderRoutes);
+router.use('/categories', categories_1.categoryRoutes);
+router.use('/suppliers', suppliers_1.supplierRoutes);
 // Payment routes
-router.use('/payments', paymentRoutes);
+router.use('/payments', payments_1.paymentRoutes);
 // Auth routes
-router.use('/auth', authRoutes);
-router.use('/supplier-auth', supplierAuthRoutes);
-router.use('/customers', customerAuthRoutes);
+router.use('/auth', auth_1.authRoutes);
+router.use('/supplier-auth', supplier_auth_1.supplierAuthRoutes);
+router.use('/customers', customer_auth_1.customerAuthRoutes);
 // Supplier portal routes
-router.use('/supplier-portal', supplierPortalRoutes);
+router.use('/supplier-portal', supplier_portal_1.supplierPortalRoutes);
 // Admin routes (all prefixed with /admin)
-router.use('/admin', adminRoutes);
+router.use('/admin', admin_1.default);
 // Health check
 router.get('/health', (req, res) => {
     res.json({
@@ -40,5 +45,5 @@ router.get('/health', (req, res) => {
         uptime: process.uptime(),
     });
 });
-export default router;
+exports.default = router;
 //# sourceMappingURL=index.js.map

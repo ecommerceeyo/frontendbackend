@@ -1,36 +1,42 @@
-import prisma from '../../config/database';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import config from '../../config';
-import { AdminRole } from '@prisma/client';
-import { NotFoundError, AppError, UnauthorizedError } from '../../middleware/errorHandler';
-export class AuthService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authService = exports.AuthService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = __importDefault(require("../../config"));
+const client_1 = require("@prisma/client");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class AuthService {
     /**
      * Admin login
      */
     async login(data) {
-        const admin = await prisma.admin.findUnique({
+        const admin = await database_1.default.admin.findUnique({
             where: { email: data.email },
         });
         if (!admin) {
-            throw new UnauthorizedError('Invalid email or password');
+            throw new errorHandler_1.UnauthorizedError('Invalid email or password');
         }
         if (!admin.active) {
-            throw new UnauthorizedError('Account is disabled');
+            throw new errorHandler_1.UnauthorizedError('Account is disabled');
         }
-        const isValidPassword = await bcrypt.compare(data.password, admin.passwordHash);
+        const isValidPassword = await bcryptjs_1.default.compare(data.password, admin.passwordHash);
         if (!isValidPassword) {
-            throw new UnauthorizedError('Invalid email or password');
+            throw new errorHandler_1.UnauthorizedError('Invalid email or password');
         }
         // Update last login
-        await prisma.admin.update({
+        await database_1.default.admin.update({
             where: { id: admin.id },
             data: { lastLoginAt: new Date() },
         });
         // Generate token
         const token = this.generateToken(admin);
         // Create audit log
-        await prisma.auditLog.create({
+        await database_1.default.auditLog.create({
             data: {
                 adminId: admin.id,
                 action: 'LOGIN',
@@ -52,19 +58,19 @@ export class AuthService {
      * Create a new admin
      */
     async createAdmin(data, createdBy) {
-        const existingAdmin = await prisma.admin.findUnique({
+        const existingAdmin = await database_1.default.admin.findUnique({
             where: { email: data.email },
         });
         if (existingAdmin) {
-            throw new AppError('An admin with this email already exists', 409);
+            throw new errorHandler_1.AppError('An admin with this email already exists', 409);
         }
-        const passwordHash = await bcrypt.hash(data.password, 10);
-        const admin = await prisma.admin.create({
+        const passwordHash = await bcryptjs_1.default.hash(data.password, 10);
+        const admin = await database_1.default.admin.create({
             data: {
                 email: data.email,
                 passwordHash,
                 name: data.name,
-                role: data.role || AdminRole.ADMIN,
+                role: data.role || client_1.AdminRole.ADMIN,
             },
             select: {
                 id: true,
@@ -77,7 +83,7 @@ export class AuthService {
         });
         // Create audit log
         if (createdBy) {
-            await prisma.auditLog.create({
+            await database_1.default.auditLog.create({
                 data: {
                     adminId: createdBy,
                     action: 'CREATE',
@@ -93,7 +99,7 @@ export class AuthService {
      * Get admin by ID
      */
     async getAdminById(id) {
-        const admin = await prisma.admin.findUnique({
+        const admin = await database_1.default.admin.findUnique({
             where: { id },
             select: {
                 id: true,
@@ -107,7 +113,7 @@ export class AuthService {
             },
         });
         if (!admin) {
-            throw new NotFoundError('Admin');
+            throw new errorHandler_1.NotFoundError('Admin');
         }
         return admin;
     }
@@ -115,7 +121,7 @@ export class AuthService {
      * Get all admins
      */
     async getAdmins() {
-        return prisma.admin.findMany({
+        return database_1.default.admin.findMany({
             select: {
                 id: true,
                 email: true,
@@ -132,21 +138,21 @@ export class AuthService {
      * Update admin
      */
     async updateAdmin(id, data, updatedBy) {
-        const admin = await prisma.admin.findUnique({ where: { id } });
+        const admin = await database_1.default.admin.findUnique({ where: { id } });
         if (!admin) {
-            throw new NotFoundError('Admin');
+            throw new errorHandler_1.NotFoundError('Admin');
         }
         // Check email uniqueness if updating email
         if (data.email && data.email !== admin.email) {
-            const existingAdmin = await prisma.admin.findUnique({
+            const existingAdmin = await database_1.default.admin.findUnique({
                 where: { email: data.email },
             });
             if (existingAdmin) {
-                throw new AppError('An admin with this email already exists', 409);
+                throw new errorHandler_1.AppError('An admin with this email already exists', 409);
             }
         }
         const oldValues = { email: admin.email, name: admin.name, role: admin.role, active: admin.active };
-        const updatedAdmin = await prisma.admin.update({
+        const updatedAdmin = await database_1.default.admin.update({
             where: { id },
             data,
             select: {
@@ -159,7 +165,7 @@ export class AuthService {
             },
         });
         // Create audit log
-        await prisma.auditLog.create({
+        await database_1.default.auditLog.create({
             data: {
                 adminId: updatedBy,
                 action: 'UPDATE',
@@ -175,21 +181,21 @@ export class AuthService {
      * Change password
      */
     async changePassword(adminId, currentPassword, newPassword) {
-        const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+        const admin = await database_1.default.admin.findUnique({ where: { id: adminId } });
         if (!admin) {
-            throw new NotFoundError('Admin');
+            throw new errorHandler_1.NotFoundError('Admin');
         }
-        const isValidPassword = await bcrypt.compare(currentPassword, admin.passwordHash);
+        const isValidPassword = await bcryptjs_1.default.compare(currentPassword, admin.passwordHash);
         if (!isValidPassword) {
-            throw new UnauthorizedError('Current password is incorrect');
+            throw new errorHandler_1.UnauthorizedError('Current password is incorrect');
         }
-        const passwordHash = await bcrypt.hash(newPassword, 10);
-        await prisma.admin.update({
+        const passwordHash = await bcryptjs_1.default.hash(newPassword, 10);
+        await database_1.default.admin.update({
             where: { id: adminId },
             data: { passwordHash },
         });
         // Create audit log
-        await prisma.auditLog.create({
+        await database_1.default.auditLog.create({
             data: {
                 adminId,
                 action: 'PASSWORD_CHANGE',
@@ -203,22 +209,22 @@ export class AuthService {
      * Delete admin
      */
     async deleteAdmin(id, deletedBy) {
-        const admin = await prisma.admin.findUnique({ where: { id } });
+        const admin = await database_1.default.admin.findUnique({ where: { id } });
         if (!admin) {
-            throw new NotFoundError('Admin');
+            throw new errorHandler_1.NotFoundError('Admin');
         }
-        if (admin.role === AdminRole.SUPER_ADMIN) {
+        if (admin.role === client_1.AdminRole.SUPER_ADMIN) {
             // Check if this is the last super admin
-            const superAdminCount = await prisma.admin.count({
-                where: { role: AdminRole.SUPER_ADMIN, active: true },
+            const superAdminCount = await database_1.default.admin.count({
+                where: { role: client_1.AdminRole.SUPER_ADMIN, active: true },
             });
             if (superAdminCount <= 1) {
-                throw new AppError('Cannot delete the last super admin', 400);
+                throw new errorHandler_1.AppError('Cannot delete the last super admin', 400);
             }
         }
-        await prisma.admin.delete({ where: { id } });
+        await database_1.default.admin.delete({ where: { id } });
         // Create audit log
-        await prisma.auditLog.create({
+        await database_1.default.auditLog.create({
             data: {
                 adminId: deletedBy,
                 action: 'DELETE',
@@ -239,12 +245,13 @@ export class AuthService {
      * Generate JWT token
      */
     generateToken(admin) {
-        return jwt.sign({
+        return jsonwebtoken_1.default.sign({
             adminId: admin.id,
             email: admin.email,
             role: admin.role,
-        }, config.jwtSecret, { expiresIn: config.jwtExpiresIn });
+        }, config_1.default.jwtSecret, { expiresIn: config_1.default.jwtExpiresIn });
     }
 }
-export const authService = new AuthService();
+exports.AuthService = AuthService;
+exports.authService = new AuthService();
 //# sourceMappingURL=auth.service.js.map

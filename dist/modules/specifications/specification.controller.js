@@ -1,12 +1,21 @@
-import { specificationService } from './specification.service';
-import { successResponse } from '../../utils/response';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getSpecificationTemplates = getSpecificationTemplates;
+exports.getSpecificationTemplate = getSpecificationTemplate;
+exports.getSpecificationsByGroup = getSpecificationsByGroup;
+exports.getSpecificationGroups = getSpecificationGroups;
+exports.createSpecificationTemplate = createSpecificationTemplate;
+exports.updateSpecificationTemplate = updateSpecificationTemplate;
+exports.deleteSpecificationTemplate = deleteSpecificationTemplate;
+const specification_service_1 = require("./specification.service");
+const response_1 = require("../../utils/response");
 /**
  * Get all specification templates
  */
-export async function getSpecificationTemplates(req, res, next) {
+async function getSpecificationTemplates(req, res, next) {
     try {
-        const templates = await specificationService.getAll();
-        return successResponse(res, templates);
+        const templates = await specification_service_1.specificationService.getAll();
+        return (0, response_1.successResponse)(res, templates);
     }
     catch (error) {
         next(error);
@@ -15,10 +24,10 @@ export async function getSpecificationTemplates(req, res, next) {
 /**
  * Get specification template by ID
  */
-export async function getSpecificationTemplate(req, res, next) {
+async function getSpecificationTemplate(req, res, next) {
     try {
-        const template = await specificationService.getById(req.params.id);
-        return successResponse(res, template);
+        const template = await specification_service_1.specificationService.getById(req.params.id);
+        return (0, response_1.successResponse)(res, template);
     }
     catch (error) {
         next(error);
@@ -27,10 +36,10 @@ export async function getSpecificationTemplate(req, res, next) {
 /**
  * Get specification templates by group
  */
-export async function getSpecificationsByGroup(req, res, next) {
+async function getSpecificationsByGroup(req, res, next) {
     try {
-        const templates = await specificationService.getByGroup(req.params.group);
-        return successResponse(res, templates);
+        const templates = await specification_service_1.specificationService.getByGroup(req.params.group);
+        return (0, response_1.successResponse)(res, templates);
     }
     catch (error) {
         next(error);
@@ -39,10 +48,10 @@ export async function getSpecificationsByGroup(req, res, next) {
 /**
  * Get all unique groups
  */
-export async function getSpecificationGroups(req, res, next) {
+async function getSpecificationGroups(req, res, next) {
     try {
-        const groups = await specificationService.getGroups();
-        return successResponse(res, groups);
+        const groups = await specification_service_1.specificationService.getGroups();
+        return (0, response_1.successResponse)(res, groups);
     }
     catch (error) {
         next(error);
@@ -51,10 +60,10 @@ export async function getSpecificationGroups(req, res, next) {
 /**
  * Create a new specification template
  */
-export async function createSpecificationTemplate(req, res, next) {
+async function createSpecificationTemplate(req, res, next) {
     try {
-        const template = await specificationService.create(req.body);
-        return successResponse(res, template, 'Specification template created successfully', 201);
+        const template = await specification_service_1.specificationService.create(req.body);
+        return (0, response_1.successResponse)(res, template, 'Specification template created successfully', 201);
     }
     catch (error) {
         next(error);
@@ -63,10 +72,10 @@ export async function createSpecificationTemplate(req, res, next) {
 /**
  * Update a specification template
  */
-export async function updateSpecificationTemplate(req, res, next) {
+async function updateSpecificationTemplate(req, res, next) {
     try {
-        const template = await specificationService.update(req.params.id, req.body);
-        return successResponse(res, template, 'Specification template updated successfully');
+        const template = await specification_service_1.specificationService.update(req.params.id, req.body);
+        return (0, response_1.successResponse)(res, template, 'Specification template updated successfully');
     }
     catch (error) {
         next(error);
@@ -75,10 +84,10 @@ export async function updateSpecificationTemplate(req, res, next) {
 /**
  * Delete a specification template
  */
-export async function deleteSpecificationTemplate(req, res, next) {
+async function deleteSpecificationTemplate(req, res, next) {
     try {
-        await specificationService.delete(req.params.id);
-        return successResponse(res, null, 'Specification template deleted successfully');
+        await specification_service_1.specificationService.delete(req.params.id);
+        return (0, response_1.successResponse)(res, null, 'Specification template deleted successfully');
     }
     catch (error) {
         next(error);

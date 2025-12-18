@@ -1,25 +1,31 @@
-import { uploadService } from './upload.service';
-import { successResponse, errorResponse } from '../../utils/response';
-import { validateImageFile } from '../../validations';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.uploadImage = uploadImage;
+exports.uploadImages = uploadImages;
+exports.deleteImage = deleteImage;
+exports.deleteImages = deleteImages;
+const upload_service_1 = require("./upload.service");
+const response_1 = require("../../utils/response");
+const validations_1 = require("../../validations");
 /**
  * Upload single image
  */
-export async function uploadImage(req, res, next) {
+async function uploadImage(req, res, next) {
     try {
         if (!req.file) {
-            return errorResponse(res, 'No file uploaded', 400);
+            return (0, response_1.errorResponse)(res, 'No file uploaded', 400);
         }
         // Validate file
-        const validation = validateImageFile(req.file);
+        const validation = (0, validations_1.validateImageFile)(req.file);
         if (!validation.valid) {
-            return errorResponse(res, validation.error || 'Invalid file', 400);
+            return (0, response_1.errorResponse)(res, validation.error || 'Invalid file', 400);
         }
         const { folder, transformation } = req.body;
-        const result = await uploadService.uploadImage(req.file, {
+        const result = await upload_service_1.uploadService.uploadImage(req.file, {
             folder,
             transformation: transformation ? JSON.parse(transformation) : undefined,
         });
-        return successResponse(res, result, 'Image uploaded successfully', 201);
+        return (0, response_1.successResponse)(res, result, 'Image uploaded successfully', 201);
     }
     catch (error) {
         next(error);
@@ -28,25 +34,25 @@ export async function uploadImage(req, res, next) {
 /**
  * Upload multiple images
  */
-export async function uploadImages(req, res, next) {
+async function uploadImages(req, res, next) {
     try {
         const files = req.files;
         if (!files || files.length === 0) {
-            return errorResponse(res, 'No files uploaded', 400);
+            return (0, response_1.errorResponse)(res, 'No files uploaded', 400);
         }
         // Validate all files
         for (const file of files) {
-            const validation = validateImageFile(file);
+            const validation = (0, validations_1.validateImageFile)(file);
             if (!validation.valid) {
-                return errorResponse(res, `${file.originalname}: ${validation.error}`, 400);
+                return (0, response_1.errorResponse)(res, `${file.originalname}: ${validation.error}`, 400);
             }
         }
         const { folder, transformation } = req.body;
-        const results = await uploadService.uploadImages(files, {
+        const results = await upload_service_1.uploadService.uploadImages(files, {
             folder,
             transformation: transformation ? JSON.parse(transformation) : undefined,
         });
-        return successResponse(res, results, 'Images uploaded successfully', 201);
+        return (0, response_1.successResponse)(res, results, 'Images uploaded successfully', 201);
     }
     catch (error) {
         next(error);
@@ -55,18 +61,18 @@ export async function uploadImages(req, res, next) {
 /**
  * Delete image
  */
-export async function deleteImage(req, res, next) {
+async function deleteImage(req, res, next) {
     try {
         const { publicId } = req.body;
         if (!publicId) {
-            return errorResponse(res, 'Public ID is required', 400);
+            return (0, response_1.errorResponse)(res, 'Public ID is required', 400);
         }
-        const success = await uploadService.deleteImage(publicId);
+        const success = await upload_service_1.uploadService.deleteImage(publicId);
         if (success) {
-            return successResponse(res, null, 'Image deleted successfully');
+            return (0, response_1.successResponse)(res, null, 'Image deleted successfully');
         }
         else {
-            return errorResponse(res, 'Failed to delete image', 500);
+            return (0, response_1.errorResponse)(res, 'Failed to delete image', 500);
         }
     }
     catch (error) {
@@ -76,14 +82,14 @@ export async function deleteImage(req, res, next) {
 /**
  * Delete multiple images
  */
-export async function deleteImages(req, res, next) {
+async function deleteImages(req, res, next) {
     try {
         const { publicIds } = req.body;
         if (!publicIds || !Array.isArray(publicIds) || publicIds.length === 0) {
-            return errorResponse(res, 'Public IDs array is required', 400);
+            return (0, response_1.errorResponse)(res, 'Public IDs array is required', 400);
         }
-        const results = await uploadService.deleteImages(publicIds);
-        return successResponse(res, results, 'Images deletion completed');
+        const results = await upload_service_1.uploadService.deleteImages(publicIds);
+        return (0, response_1.successResponse)(res, results, 'Images deletion completed');
     }
     catch (error) {
         next(error);

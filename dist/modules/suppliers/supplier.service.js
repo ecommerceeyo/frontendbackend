@@ -1,13 +1,19 @@
-import prisma from '../../config/database';
-import { slugify, parsePaginationParams } from '../../utils/helpers';
-import { NotFoundError, AppError } from '../../middleware/errorHandler';
-import bcrypt from 'bcryptjs';
-export class SupplierService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.supplierService = exports.SupplierService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+class SupplierService {
     /**
      * Get paginated list of suppliers (public - only ACTIVE)
      */
     async getSuppliers(params) {
-        const { page, limit, skip, sortBy, sortOrder } = parsePaginationParams(params);
+        const { page, limit, skip, sortBy, sortOrder } = (0, helpers_1.parsePaginationParams)(params);
         const where = {
             status: 'ACTIVE',
             verified: true,
@@ -22,7 +28,7 @@ export class SupplierService {
             ];
         }
         const [suppliers, total] = await Promise.all([
-            prisma.supplier.findMany({
+            database_1.default.supplier.findMany({
                 where,
                 select: {
                     id: true,
@@ -42,7 +48,7 @@ export class SupplierService {
                 skip,
                 take: limit,
             }),
-            prisma.supplier.count({ where }),
+            database_1.default.supplier.count({ where }),
         ]);
         return { suppliers, total, page, limit };
     }
@@ -50,7 +56,7 @@ export class SupplierService {
      * Get all suppliers (admin - includes all statuses)
      */
     async getAllSuppliers(params) {
-        const { page, limit, skip, sortBy, sortOrder } = parsePaginationParams(params);
+        const { page, limit, skip, sortBy, sortOrder } = (0, helpers_1.parsePaginationParams)(params);
         const where = {};
         // Status filter
         if (params.status) {
@@ -70,7 +76,7 @@ export class SupplierService {
             ];
         }
         const [suppliers, total] = await Promise.all([
-            prisma.supplier.findMany({
+            database_1.default.supplier.findMany({
                 where,
                 include: {
                     _count: {
@@ -85,7 +91,7 @@ export class SupplierService {
                 skip,
                 take: limit,
             }),
-            prisma.supplier.count({ where }),
+            database_1.default.supplier.count({ where }),
         ]);
         return { suppliers, total, page, limit };
     }
@@ -93,7 +99,7 @@ export class SupplierService {
      * Get supplier by ID or slug (public - only ACTIVE)
      */
     async getSupplierByIdOrSlug(idOrSlug) {
-        const supplier = await prisma.supplier.findFirst({
+        const supplier = await database_1.default.supplier.findFirst({
             where: {
                 OR: [{ id: idOrSlug }, { slug: idOrSlug }],
                 status: 'ACTIVE',
@@ -115,7 +121,7 @@ export class SupplierService {
             },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         return supplier;
     }
@@ -123,7 +129,7 @@ export class SupplierService {
      * Get supplier by ID (admin)
      */
     async getSupplierById(id) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id },
             include: {
                 admins: {
@@ -148,7 +154,7 @@ export class SupplierService {
             },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         return supplier;
     }
@@ -156,20 +162,20 @@ export class SupplierService {
      * Create a new supplier
      */
     async createSupplier(data) {
-        const slug = slugify(data.name);
+        const slug = (0, helpers_1.slugify)(data.name);
         // Check if slug or email exists
-        const existing = await prisma.supplier.findFirst({
+        const existing = await database_1.default.supplier.findFirst({
             where: {
                 OR: [{ slug }, { email: data.email }],
             },
         });
         if (existing) {
             if (existing.email === data.email) {
-                throw new AppError('A supplier with this email already exists', 409);
+                throw new errorHandler_1.AppError('A supplier with this email already exists', 409);
             }
-            throw new AppError('A supplier with this name already exists', 409);
+            throw new errorHandler_1.AppError('A supplier with this name already exists', 409);
         }
-        const supplier = await prisma.supplier.create({
+        const supplier = await database_1.default.supplier.create({
             data: {
                 name: data.name,
                 slug,
@@ -199,33 +205,33 @@ export class SupplierService {
      * Update supplier
      */
     async updateSupplier(id, data) {
-        const existing = await prisma.supplier.findUnique({
+        const existing = await database_1.default.supplier.findUnique({
             where: { id },
         });
         if (!existing) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         // Handle slug update if name changes
         let slug = existing.slug;
         if (data.name && data.name !== existing.name) {
-            slug = slugify(data.name);
-            const slugExists = await prisma.supplier.findFirst({
+            slug = (0, helpers_1.slugify)(data.name);
+            const slugExists = await database_1.default.supplier.findFirst({
                 where: { slug, NOT: { id } },
             });
             if (slugExists) {
-                throw new AppError('A supplier with this name already exists', 409);
+                throw new errorHandler_1.AppError('A supplier with this name already exists', 409);
             }
         }
         // Check email uniqueness
         if (data.email && data.email !== existing.email) {
-            const emailExists = await prisma.supplier.findFirst({
+            const emailExists = await database_1.default.supplier.findFirst({
                 where: { email: data.email, NOT: { id } },
             });
             if (emailExists) {
-                throw new AppError('A supplier with this email already exists', 409);
+                throw new errorHandler_1.AppError('A supplier with this email already exists', 409);
             }
         }
-        const supplier = await prisma.supplier.update({
+        const supplier = await database_1.default.supplier.update({
             where: { id },
             data: {
                 ...data,
@@ -238,13 +244,13 @@ export class SupplierService {
      * Update supplier status (admin)
      */
     async updateSupplierStatus(id, status) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
-        const updatedSupplier = await prisma.supplier.update({
+        const updatedSupplier = await database_1.default.supplier.update({
             where: { id },
             data: {
                 status,
@@ -258,16 +264,16 @@ export class SupplierService {
      * Update supplier commission rate (admin)
      */
     async updateSupplierCommission(id, commissionRate) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         if (commissionRate < 0 || commissionRate > 100) {
-            throw new AppError('Commission rate must be between 0 and 100', 400);
+            throw new errorHandler_1.AppError('Commission rate must be between 0 and 100', 400);
         }
-        const updatedSupplier = await prisma.supplier.update({
+        const updatedSupplier = await database_1.default.supplier.update({
             where: { id },
             data: { commissionRate },
         });
@@ -277,13 +283,13 @@ export class SupplierService {
      * Get supplier's products
      */
     async getSupplierProducts(supplierId, params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = {
             supplierId,
             active: params.active ?? true,
         };
         const [products, total] = await Promise.all([
-            prisma.product.findMany({
+            database_1.default.product.findMany({
                 where,
                 include: {
                     images: {
@@ -302,7 +308,7 @@ export class SupplierService {
                 skip,
                 take: limit,
             }),
-            prisma.product.count({ where }),
+            database_1.default.product.count({ where }),
         ]);
         return { products, total, page, limit };
     }
@@ -311,16 +317,16 @@ export class SupplierService {
      */
     async getSupplierStats(supplierId) {
         const [totalProducts, activeProducts, totalOrders, pendingOrders, deliveredOrders, totalRevenue, pendingPayouts,] = await Promise.all([
-            prisma.product.count({ where: { supplierId } }),
-            prisma.product.count({ where: { supplierId, active: true } }),
-            prisma.orderItem.count({ where: { supplierId } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'PENDING' } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'DELIVERED' } }),
-            prisma.orderItem.aggregate({
+            database_1.default.product.count({ where: { supplierId } }),
+            database_1.default.product.count({ where: { supplierId, active: true } }),
+            database_1.default.orderItem.count({ where: { supplierId } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'PENDING' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'DELIVERED' } }),
+            database_1.default.orderItem.aggregate({
                 where: { supplierId, fulfillmentStatus: 'DELIVERED' },
                 _sum: { totalPrice: true },
             }),
-            prisma.supplierPayout.aggregate({
+            database_1.default.supplierPayout.aggregate({
                 where: { supplierId, status: 'PENDING' },
                 _sum: { netAmount: true },
             }),
@@ -342,14 +348,14 @@ export class SupplierService {
      * Get supplier users/admins
      */
     async getSupplierUsers(supplierId) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id: supplierId },
             select: { maxUsers: true },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
-        const users = await prisma.supplierAdmin.findMany({
+        const users = await database_1.default.supplierAdmin.findMany({
             where: { supplierId },
             select: {
                 id: true,
@@ -374,7 +380,7 @@ export class SupplierService {
      * Create supplier user (admin only)
      */
     async createSupplierUser(supplierId, data) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id: supplierId },
             select: {
                 id: true,
@@ -383,22 +389,22 @@ export class SupplierService {
             },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         // Check max users limit
         if (supplier._count.admins >= supplier.maxUsers) {
-            throw new AppError(`Maximum users limit (${supplier.maxUsers}) reached for this supplier`, 400);
+            throw new errorHandler_1.AppError(`Maximum users limit (${supplier.maxUsers}) reached for this supplier`, 400);
         }
         // Check if email exists
-        const existingUser = await prisma.supplierAdmin.findUnique({
+        const existingUser = await database_1.default.supplierAdmin.findUnique({
             where: { email: data.email },
         });
         if (existingUser) {
-            throw new AppError('A user with this email already exists', 409);
+            throw new errorHandler_1.AppError('A user with this email already exists', 409);
         }
         // Hash password
-        const passwordHash = await bcrypt.hash(data.password, 10);
-        const user = await prisma.supplierAdmin.create({
+        const passwordHash = await bcryptjs_1.default.hash(data.password, 10);
+        const user = await database_1.default.supplierAdmin.create({
             data: {
                 supplierId,
                 email: data.email,
@@ -423,13 +429,13 @@ export class SupplierService {
      * Update supplier user
      */
     async updateSupplierUser(supplierId, userId, data) {
-        const user = await prisma.supplierAdmin.findFirst({
+        const user = await database_1.default.supplierAdmin.findFirst({
             where: { id: userId, supplierId },
         });
         if (!user) {
-            throw new NotFoundError('Supplier user');
+            throw new errorHandler_1.NotFoundError('Supplier user');
         }
-        const updatedUser = await prisma.supplierAdmin.update({
+        const updatedUser = await database_1.default.supplierAdmin.update({
             where: { id: userId },
             data,
             select: {
@@ -449,17 +455,17 @@ export class SupplierService {
      * Update supplier user permissions (admin only)
      */
     async updateSupplierUserPermissions(supplierId, userId, permissions) {
-        const user = await prisma.supplierAdmin.findFirst({
+        const user = await database_1.default.supplierAdmin.findFirst({
             where: { id: userId, supplierId },
         });
         if (!user) {
-            throw new NotFoundError('Supplier user');
+            throw new errorHandler_1.NotFoundError('Supplier user');
         }
         // OWNERs always have full permissions, can't override
         if (user.role === 'OWNER') {
-            throw new AppError('Cannot customize permissions for OWNER role', 400);
+            throw new errorHandler_1.AppError('Cannot customize permissions for OWNER role', 400);
         }
-        const updatedUser = await prisma.supplierAdmin.update({
+        const updatedUser = await database_1.default.supplierAdmin.update({
             where: { id: userId },
             data: { permissions },
             select: {
@@ -479,22 +485,22 @@ export class SupplierService {
      * Delete supplier user
      */
     async deleteSupplierUser(supplierId, userId) {
-        const user = await prisma.supplierAdmin.findFirst({
+        const user = await database_1.default.supplierAdmin.findFirst({
             where: { id: userId, supplierId },
         });
         if (!user) {
-            throw new NotFoundError('Supplier user');
+            throw new errorHandler_1.NotFoundError('Supplier user');
         }
         // Don't allow deleting the last OWNER
         if (user.role === 'OWNER') {
-            const ownerCount = await prisma.supplierAdmin.count({
+            const ownerCount = await database_1.default.supplierAdmin.count({
                 where: { supplierId, role: 'OWNER' },
             });
             if (ownerCount <= 1) {
-                throw new AppError('Cannot delete the last owner of the supplier', 400);
+                throw new errorHandler_1.AppError('Cannot delete the last owner of the supplier', 400);
             }
         }
-        await prisma.supplierAdmin.delete({
+        await database_1.default.supplierAdmin.delete({
             where: { id: userId },
         });
         return { success: true };
@@ -504,19 +510,19 @@ export class SupplierService {
      */
     async updateSupplierMaxUsers(supplierId, maxUsers) {
         if (maxUsers < 1 || maxUsers > 50) {
-            throw new AppError('Max users must be between 1 and 50', 400);
+            throw new errorHandler_1.AppError('Max users must be between 1 and 50', 400);
         }
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id: supplierId },
             include: { _count: { select: { admins: true } } },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         if (maxUsers < supplier._count.admins) {
-            throw new AppError(`Cannot set max users below current user count (${supplier._count.admins})`, 400);
+            throw new errorHandler_1.AppError(`Cannot set max users below current user count (${supplier._count.admins})`, 400);
         }
-        const updated = await prisma.supplier.update({
+        const updated = await database_1.default.supplier.update({
             where: { id: supplierId },
             data: { maxUsers },
         });
@@ -527,19 +533,19 @@ export class SupplierService {
      */
     async updateSupplierMaxProducts(supplierId, maxProducts) {
         if (maxProducts < 1 || maxProducts > 10000) {
-            throw new AppError('Max products must be between 1 and 10000', 400);
+            throw new errorHandler_1.AppError('Max products must be between 1 and 10000', 400);
         }
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id: supplierId },
             include: { _count: { select: { products: true } } },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         if (maxProducts < supplier._count.products) {
-            throw new AppError(`Cannot set max products below current product count (${supplier._count.products})`, 400);
+            throw new errorHandler_1.AppError(`Cannot set max products below current product count (${supplier._count.products})`, 400);
         }
-        const updated = await prisma.supplier.update({
+        const updated = await database_1.default.supplier.update({
             where: { id: supplierId },
             data: { maxProducts },
         });
@@ -549,14 +555,14 @@ export class SupplierService {
      * Get supplier product limits info
      */
     async getSupplierProductLimits(supplierId) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id: supplierId },
             select: { maxProducts: true },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
-        const productCount = await prisma.product.count({
+        const productCount = await database_1.default.product.count({
             where: { supplierId },
         });
         return {
@@ -573,7 +579,7 @@ export class SupplierService {
      * Get all products for a supplier (admin)
      */
     async getSupplierProductsAdmin(supplierId, params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = { supplierId };
         if (params.active !== undefined) {
             where.active = params.active;
@@ -585,7 +591,7 @@ export class SupplierService {
             ];
         }
         const [products, total] = await Promise.all([
-            prisma.product.findMany({
+            database_1.default.product.findMany({
                 where,
                 include: {
                     images: {
@@ -602,7 +608,7 @@ export class SupplierService {
                 skip,
                 take: limit,
             }),
-            prisma.product.count({ where }),
+            database_1.default.product.count({ where }),
         ]);
         return { products, total, page, limit };
     }
@@ -610,13 +616,13 @@ export class SupplierService {
      * Toggle product active status for a supplier
      */
     async toggleSupplierProductStatus(supplierId, productId, active) {
-        const product = await prisma.product.findFirst({
+        const product = await database_1.default.product.findFirst({
             where: { id: productId, supplierId },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
-        const updated = await prisma.product.update({
+        const updated = await database_1.default.product.update({
             where: { id: productId },
             data: { active },
         });
@@ -626,7 +632,7 @@ export class SupplierService {
      * Bulk toggle products for a supplier
      */
     async bulkToggleSupplierProducts(supplierId, productIds, active) {
-        const result = await prisma.product.updateMany({
+        const result = await database_1.default.product.updateMany({
             where: {
                 id: { in: productIds },
                 supplierId,
@@ -642,7 +648,7 @@ export class SupplierService {
      * Get orders for a supplier (admin)
      */
     async getSupplierOrders(supplierId, params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = { supplierId };
         if (params.fulfillmentStatus) {
             where.fulfillmentStatus = params.fulfillmentStatus;
@@ -656,7 +662,7 @@ export class SupplierService {
             };
         }
         const [orderItems, total] = await Promise.all([
-            prisma.orderItem.findMany({
+            database_1.default.orderItem.findMany({
                 where,
                 include: {
                     order: {
@@ -684,7 +690,7 @@ export class SupplierService {
                 skip,
                 take: limit,
             }),
-            prisma.orderItem.count({ where }),
+            database_1.default.orderItem.count({ where }),
         ]);
         return { orderItems, total, page, limit };
     }
@@ -693,12 +699,12 @@ export class SupplierService {
      */
     async getSupplierOrderStats(supplierId) {
         const [pending, confirmed, processing, shipped, delivered, cancelled] = await Promise.all([
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'PENDING' } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'CONFIRMED' } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'PROCESSING' } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'SHIPPED' } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'DELIVERED' } }),
-            prisma.orderItem.count({ where: { supplierId, fulfillmentStatus: 'CANCELLED' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'PENDING' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'CONFIRMED' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'PROCESSING' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'SHIPPED' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'DELIVERED' } }),
+            database_1.default.orderItem.count({ where: { supplierId, fulfillmentStatus: 'CANCELLED' } }),
         ]);
         return { pending, confirmed, processing, shipped, delivered, cancelled };
     }
@@ -706,11 +712,11 @@ export class SupplierService {
      * Update order item fulfillment status (admin)
      */
     async updateOrderItemFulfillment(supplierId, orderItemId, data) {
-        const orderItem = await prisma.orderItem.findFirst({
+        const orderItem = await database_1.default.orderItem.findFirst({
             where: { id: orderItemId, supplierId },
         });
         if (!orderItem) {
-            throw new NotFoundError('Order item');
+            throw new errorHandler_1.NotFoundError('Order item');
         }
         const updateData = {
             fulfillmentStatus: data.fulfillmentStatus,
@@ -731,12 +737,13 @@ export class SupplierService {
         else if (data.fulfillmentStatus === 'DELIVERED') {
             updateData.deliveredAt = new Date();
         }
-        const updated = await prisma.orderItem.update({
+        const updated = await database_1.default.orderItem.update({
             where: { id: orderItemId },
             data: updateData,
         });
         return updated;
     }
 }
-export const supplierService = new SupplierService();
+exports.SupplierService = SupplierService;
+exports.supplierService = new SupplierService();
 //# sourceMappingURL=supplier.service.js.map

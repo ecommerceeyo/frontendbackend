@@ -1,35 +1,41 @@
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import prisma from '../../config/database';
-import config from '../../config';
-import { NotFoundError, UnauthorizedError } from '../../middleware/errorHandler';
-import { slugify } from '../../utils/helpers';
-export class SupplierAuthService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.supplierAuthService = exports.SupplierAuthService = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const database_1 = __importDefault(require("../../config/database"));
+const config_1 = __importDefault(require("../../config"));
+const errorHandler_1 = require("../../middleware/errorHandler");
+const helpers_1 = require("../../utils/helpers");
+class SupplierAuthService {
     /**
      * Login supplier admin
      */
     async login(data) {
-        const supplierAdmin = await prisma.supplierAdmin.findUnique({
+        const supplierAdmin = await database_1.default.supplierAdmin.findUnique({
             where: { email: data.email },
             include: {
                 supplier: true,
             },
         });
         if (!supplierAdmin) {
-            throw new UnauthorizedError('Invalid email or password');
+            throw new errorHandler_1.UnauthorizedError('Invalid email or password');
         }
         if (!supplierAdmin.active) {
-            throw new UnauthorizedError('Your account has been deactivated');
+            throw new errorHandler_1.UnauthorizedError('Your account has been deactivated');
         }
         if (supplierAdmin.supplier.status !== 'ACTIVE') {
-            throw new UnauthorizedError('Your supplier account is not active');
+            throw new errorHandler_1.UnauthorizedError('Your supplier account is not active');
         }
-        const isPasswordValid = await bcrypt.compare(data.password, supplierAdmin.passwordHash);
+        const isPasswordValid = await bcryptjs_1.default.compare(data.password, supplierAdmin.passwordHash);
         if (!isPasswordValid) {
-            throw new UnauthorizedError('Invalid email or password');
+            throw new errorHandler_1.UnauthorizedError('Invalid email or password');
         }
         // Update last login
-        await prisma.supplierAdmin.update({
+        await database_1.default.supplierAdmin.update({
             where: { id: supplierAdmin.id },
             data: { lastLoginAt: new Date() },
         });
@@ -41,8 +47,8 @@ export class SupplierAuthService {
             email: supplierAdmin.email,
             role: supplierAdmin.role,
         };
-        const token = jwt.sign(tokenPayload, config.jwtSecret, {
-            expiresIn: config.jwtExpiresIn,
+        const token = jsonwebtoken_1.default.sign(tokenPayload, config_1.default.jwtSecret, {
+            expiresIn: config_1.default.jwtExpiresIn,
         });
         return {
             token,
@@ -68,9 +74,9 @@ export class SupplierAuthService {
      * Register new supplier with owner account
      */
     async register(data) {
-        const slug = slugify(data.supplierName);
+        const slug = (0, helpers_1.slugify)(data.supplierName);
         // Check if supplier email or slug exists
-        const existingSupplier = await prisma.supplier.findFirst({
+        const existingSupplier = await database_1.default.supplier.findFirst({
             where: {
                 OR: [{ email: data.email }, { slug }],
             },
@@ -82,16 +88,16 @@ export class SupplierAuthService {
             throw new Error('A supplier with this name already exists');
         }
         // Check if admin email exists
-        const existingAdmin = await prisma.supplierAdmin.findUnique({
+        const existingAdmin = await database_1.default.supplierAdmin.findUnique({
             where: { email: data.email },
         });
         if (existingAdmin) {
             throw new Error('An account with this email already exists');
         }
         // Hash password
-        const passwordHash = await bcrypt.hash(data.ownerPassword, 12);
+        const passwordHash = await bcryptjs_1.default.hash(data.ownerPassword, 12);
         // Create supplier and owner in transaction
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await database_1.default.$transaction(async (tx) => {
             const supplier = await tx.supplier.create({
                 data: {
                     name: data.supplierName,
@@ -141,7 +147,7 @@ export class SupplierAuthService {
      * Get current supplier admin info
      */
     async getMe(supplierAdminId) {
-        const supplierAdmin = await prisma.supplierAdmin.findUnique({
+        const supplierAdmin = await database_1.default.supplierAdmin.findUnique({
             where: { id: supplierAdminId },
             include: {
                 supplier: {
@@ -167,7 +173,7 @@ export class SupplierAuthService {
             },
         });
         if (!supplierAdmin) {
-            throw new NotFoundError('Supplier admin');
+            throw new errorHandler_1.NotFoundError('Supplier admin');
         }
         return {
             id: supplierAdmin.id,
@@ -182,18 +188,18 @@ export class SupplierAuthService {
      * Change password
      */
     async changePassword(supplierAdminId, currentPassword, newPassword) {
-        const supplierAdmin = await prisma.supplierAdmin.findUnique({
+        const supplierAdmin = await database_1.default.supplierAdmin.findUnique({
             where: { id: supplierAdminId },
         });
         if (!supplierAdmin) {
-            throw new NotFoundError('Supplier admin');
+            throw new errorHandler_1.NotFoundError('Supplier admin');
         }
-        const isPasswordValid = await bcrypt.compare(currentPassword, supplierAdmin.passwordHash);
+        const isPasswordValid = await bcryptjs_1.default.compare(currentPassword, supplierAdmin.passwordHash);
         if (!isPasswordValid) {
-            throw new UnauthorizedError('Current password is incorrect');
+            throw new errorHandler_1.UnauthorizedError('Current password is incorrect');
         }
-        const passwordHash = await bcrypt.hash(newPassword, 12);
-        await prisma.supplierAdmin.update({
+        const passwordHash = await bcryptjs_1.default.hash(newPassword, 12);
+        await database_1.default.supplierAdmin.update({
             where: { id: supplierAdminId },
             data: { passwordHash },
         });
@@ -204,14 +210,14 @@ export class SupplierAuthService {
      */
     async createStaff(supplierId, data) {
         // Check if email exists
-        const existingAdmin = await prisma.supplierAdmin.findUnique({
+        const existingAdmin = await database_1.default.supplierAdmin.findUnique({
             where: { email: data.email },
         });
         if (existingAdmin) {
             throw new Error('An account with this email already exists');
         }
-        const passwordHash = await bcrypt.hash(data.password, 12);
-        const supplierAdmin = await prisma.supplierAdmin.create({
+        const passwordHash = await bcryptjs_1.default.hash(data.password, 12);
+        const supplierAdmin = await database_1.default.supplierAdmin.create({
             data: {
                 supplierId,
                 email: data.email,
@@ -234,7 +240,7 @@ export class SupplierAuthService {
      * List supplier staff
      */
     async getStaff(supplierId) {
-        const staff = await prisma.supplierAdmin.findMany({
+        const staff = await database_1.default.supplierAdmin.findMany({
             where: { supplierId },
             select: {
                 id: true,
@@ -254,16 +260,16 @@ export class SupplierAuthService {
      * Update staff status
      */
     async updateStaffStatus(supplierId, staffId, active) {
-        const staff = await prisma.supplierAdmin.findFirst({
+        const staff = await database_1.default.supplierAdmin.findFirst({
             where: { id: staffId, supplierId },
         });
         if (!staff) {
-            throw new NotFoundError('Staff member');
+            throw new errorHandler_1.NotFoundError('Staff member');
         }
         if (staff.role === 'OWNER') {
             throw new Error('Cannot deactivate owner account');
         }
-        await prisma.supplierAdmin.update({
+        await database_1.default.supplierAdmin.update({
             where: { id: staffId },
             data: { active },
         });
@@ -273,20 +279,21 @@ export class SupplierAuthService {
      * Delete staff
      */
     async deleteStaff(supplierId, staffId) {
-        const staff = await prisma.supplierAdmin.findFirst({
+        const staff = await database_1.default.supplierAdmin.findFirst({
             where: { id: staffId, supplierId },
         });
         if (!staff) {
-            throw new NotFoundError('Staff member');
+            throw new errorHandler_1.NotFoundError('Staff member');
         }
         if (staff.role === 'OWNER') {
             throw new Error('Cannot delete owner account');
         }
-        await prisma.supplierAdmin.delete({
+        await database_1.default.supplierAdmin.delete({
             where: { id: staffId },
         });
         return { message: 'Staff deleted successfully' };
     }
 }
-export const supplierAuthService = new SupplierAuthService();
+exports.SupplierAuthService = SupplierAuthService;
+exports.supplierAuthService = new SupplierAuthService();
 //# sourceMappingURL=supplier-auth.service.js.map

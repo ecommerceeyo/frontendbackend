@@ -1,6 +1,12 @@
-import dotenv from 'dotenv';
-dotenv.config();
-export const config = {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.config = void 0;
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+exports.config = {
     // Server
     port: parseInt(process.env.PORT || '3000', 10),
     nodeEnv: process.env.NODE_ENV || 'development',
@@ -76,5 +82,5 @@ export const config = {
     defaultCurrency: 'XAF',
     currencySymbol: 'FCFA',
 };
-export default config;
+exports.default = exports.config;
 //# sourceMappingURL=index.js.map

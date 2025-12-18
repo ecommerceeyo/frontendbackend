@@ -1,31 +1,34 @@
-import { z } from 'zod';
-import { dateRangeSchema, paginationSchema } from './common';
-import { ReportType } from '@prisma/client';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.inventoryReportQuerySchema = exports.salesReportQuerySchema = exports.dashboardStatsQuerySchema = exports.reportListQuerySchema = exports.generateReportSchema = void 0;
+const zod_1 = require("zod");
+const common_1 = require("./common");
+const client_1 = require("@prisma/client");
 // Generate report schema
-export const generateReportSchema = z.object({
-    type: z.nativeEnum(ReportType),
-    startDate: z.coerce.date(),
-    endDate: z.coerce.date(),
-    format: z.enum(['pdf', 'csv']).default('pdf'),
+exports.generateReportSchema = zod_1.z.object({
+    type: zod_1.z.nativeEnum(client_1.ReportType),
+    startDate: zod_1.z.coerce.date(),
+    endDate: zod_1.z.coerce.date(),
+    format: zod_1.z.enum(['pdf', 'csv']).default('pdf'),
 });
 // Report list query schema
-export const reportListQuerySchema = paginationSchema.extend({
-    type: z.nativeEnum(ReportType).optional(),
-    status: z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED']).optional(),
-    ...dateRangeSchema.shape,
+exports.reportListQuerySchema = common_1.paginationSchema.extend({
+    type: zod_1.z.nativeEnum(client_1.ReportType).optional(),
+    status: zod_1.z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED']).optional(),
+    ...common_1.dateRangeSchema.shape,
 });
 // Dashboard stats query schema
-export const dashboardStatsQuerySchema = z.object({
-    period: z.enum(['today', 'week', 'month', 'year']).default('month'),
+exports.dashboardStatsQuerySchema = zod_1.z.object({
+    period: zod_1.z.enum(['today', 'week', 'month', 'year']).default('month'),
 });
 // Sales report query schema
-export const salesReportQuerySchema = dateRangeSchema.extend({
-    groupBy: z.enum(['day', 'week', 'month']).default('day'),
+exports.salesReportQuerySchema = common_1.dateRangeSchema.extend({
+    groupBy: zod_1.z.enum(['day', 'week', 'month']).default('day'),
 });
 // Inventory report query schema
-export const inventoryReportQuerySchema = z.object({
-    lowStock: z.coerce.boolean().optional(),
-    outOfStock: z.coerce.boolean().optional(),
-    categoryId: z.string().optional(),
+exports.inventoryReportQuerySchema = zod_1.z.object({
+    lowStock: zod_1.z.coerce.boolean().optional(),
+    outOfStock: zod_1.z.coerce.boolean().optional(),
+    categoryId: zod_1.z.string().optional(),
 });
 //# sourceMappingURL=report.js.map

@@ -1,13 +1,23 @@
-import { reportService } from './report.service';
-import { successResponse, paginatedResponse } from '../../utils/response';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getDashboardStats = getDashboardStats;
+exports.getSalesReport = getSalesReport;
+exports.getInventoryReport = getInventoryReport;
+exports.getOrderReport = getOrderReport;
+exports.generateReport = generateReport;
+exports.getReport = getReport;
+exports.getReports = getReports;
+exports.getReportSummary = getReportSummary;
+const report_service_1 = require("./report.service");
+const response_1 = require("../../utils/response");
 /**
  * Get dashboard statistics
  */
-export async function getDashboardStats(req, res, next) {
+async function getDashboardStats(req, res, next) {
     try {
         const period = req.query.period || 'month';
-        const stats = await reportService.getDashboardStats(period);
-        return successResponse(res, stats);
+        const stats = await report_service_1.reportService.getDashboardStats(period);
+        return (0, response_1.successResponse)(res, stats);
     }
     catch (error) {
         next(error);
@@ -16,13 +26,13 @@ export async function getDashboardStats(req, res, next) {
 /**
  * Get sales report
  */
-export async function getSalesReport(req, res, next) {
+async function getSalesReport(req, res, next) {
     try {
         const { startDate, endDate, groupBy } = req.query;
         const start = startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const end = endDate ? new Date(endDate) : new Date();
-        const report = await reportService.getSalesReport(start, end, groupBy || 'day');
-        return successResponse(res, report);
+        const report = await report_service_1.reportService.getSalesReport(start, end, groupBy || 'day');
+        return (0, response_1.successResponse)(res, report);
     }
     catch (error) {
         next(error);
@@ -31,15 +41,15 @@ export async function getSalesReport(req, res, next) {
 /**
  * Get inventory report
  */
-export async function getInventoryReport(req, res, next) {
+async function getInventoryReport(req, res, next) {
     try {
         const { lowStock, outOfStock, categoryId } = req.query;
-        const report = await reportService.getInventoryReport({
+        const report = await report_service_1.reportService.getInventoryReport({
             lowStock: lowStock === 'true',
             outOfStock: outOfStock === 'true',
             categoryId: categoryId,
         });
-        return successResponse(res, report);
+        return (0, response_1.successResponse)(res, report);
     }
     catch (error) {
         next(error);
@@ -48,13 +58,13 @@ export async function getInventoryReport(req, res, next) {
 /**
  * Get order report
  */
-export async function getOrderReport(req, res, next) {
+async function getOrderReport(req, res, next) {
     try {
         const { startDate, endDate } = req.query;
         const start = startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const end = endDate ? new Date(endDate) : new Date();
-        const report = await reportService.getOrderReport(start, end);
-        return successResponse(res, report);
+        const report = await report_service_1.reportService.getOrderReport(start, end);
+        return (0, response_1.successResponse)(res, report);
     }
     catch (error) {
         next(error);
@@ -63,15 +73,15 @@ export async function getOrderReport(req, res, next) {
 /**
  * Generate a report (queued)
  */
-export async function generateReport(req, res, next) {
+async function generateReport(req, res, next) {
     try {
         const { type, startDate, endDate, format } = req.body;
-        const report = await reportService.generateReport(type, {
+        const report = await report_service_1.reportService.generateReport(type, {
             startDate: new Date(startDate),
             endDate: new Date(endDate),
             format,
         }, req.admin.id);
-        return successResponse(res, report, 'Report generation queued', 202);
+        return (0, response_1.successResponse)(res, report, 'Report generation queued', 202);
     }
     catch (error) {
         next(error);
@@ -80,10 +90,10 @@ export async function generateReport(req, res, next) {
 /**
  * Get report by ID
  */
-export async function getReport(req, res, next) {
+async function getReport(req, res, next) {
     try {
-        const report = await reportService.getReportById(req.params.id);
-        return successResponse(res, report);
+        const report = await report_service_1.reportService.getReportById(req.params.id);
+        return (0, response_1.successResponse)(res, report);
     }
     catch (error) {
         next(error);
@@ -92,10 +102,10 @@ export async function getReport(req, res, next) {
 /**
  * Get all reports
  */
-export async function getReports(req, res, next) {
+async function getReports(req, res, next) {
     try {
-        const { reports, total, page, limit } = await reportService.getReports(req.query);
-        return paginatedResponse(res, reports, page, limit, total);
+        const { reports, total, page, limit } = await report_service_1.reportService.getReports(req.query);
+        return (0, response_1.paginatedResponse)(res, reports, page, limit, total);
     }
     catch (error) {
         next(error);
@@ -104,13 +114,13 @@ export async function getReports(req, res, next) {
 /**
  * Get report summary for admin reports page
  */
-export async function getReportSummary(req, res, next) {
+async function getReportSummary(req, res, next) {
     try {
         const { startDate, endDate } = req.query;
         const start = startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const end = endDate ? new Date(endDate) : new Date();
-        const report = await reportService.getReportSummary(start, end);
-        return successResponse(res, report);
+        const report = await report_service_1.reportService.getReportSummary(start, end);
+        return (0, response_1.successResponse)(res, report);
     }
     catch (error) {
         next(error);

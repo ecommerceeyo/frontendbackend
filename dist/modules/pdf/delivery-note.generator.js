@@ -1,5 +1,12 @@
-import PDFDocument from 'pdfkit';
-import QRCode from 'qrcode';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeliveryNoteGenerator = void 0;
+exports.generateDeliveryNotePdf = generateDeliveryNotePdf;
+const pdfkit_1 = __importDefault(require("pdfkit"));
+const qrcode_1 = __importDefault(require("qrcode"));
 // Color palette
 const COLORS = {
     primary: '#1a365d',
@@ -12,7 +19,7 @@ const COLORS = {
     text: '#1a202c',
     textMuted: '#718096',
 };
-export class DeliveryNoteGenerator {
+class DeliveryNoteGenerator {
     doc;
     order;
     company;
@@ -35,7 +42,7 @@ export class DeliveryNoteGenerator {
         this.margin = 50;
         this.pageWidth = 595.28; // A4 width in points
         this.contentWidth = this.pageWidth - this.margin * 2;
-        this.doc = new PDFDocument({
+        this.doc = new pdfkit_1.default({
             size: 'A4',
             margin: this.margin,
             bufferPages: true,
@@ -322,7 +329,7 @@ export class DeliveryNoteGenerator {
         const qrUrl = this.options.qrCodeUrl ||
             `${process.env.FRONTEND_URL}/track/${this.order.orderNumber}`;
         try {
-            const qrDataUrl = await QRCode.toDataURL(qrUrl, {
+            const qrDataUrl = await qrcode_1.default.toDataURL(qrUrl, {
                 width: 70,
                 margin: 1,
                 color: {
@@ -439,7 +446,8 @@ export class DeliveryNoteGenerator {
         }
     }
 }
-export async function generateDeliveryNotePdf(order, company, options) {
+exports.DeliveryNoteGenerator = DeliveryNoteGenerator;
+async function generateDeliveryNotePdf(order, company, options) {
     const generator = new DeliveryNoteGenerator(order, company, options);
     return generator.generate();
 }

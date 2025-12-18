@@ -1,16 +1,22 @@
-import { emailQueue, smsQueue, whatsappQueue, pdfQueue } from '../../config/queue';
-import prisma from '../../config/database';
-import logger from '../../utils/logger';
-export class NotificationService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.notificationService = exports.NotificationService = void 0;
+const queue_1 = require("../../config/queue");
+const database_1 = __importDefault(require("../../config/database"));
+const logger_1 = __importDefault(require("../../utils/logger"));
+class NotificationService {
     /**
      * Queue email notification
      */
     async queueEmail(data) {
-        if (!emailQueue) {
-            logger.warn('Email queue not available - Redis not configured');
+        if (!queue_1.emailQueue) {
+            logger_1.default.warn('Email queue not available - Redis not configured');
             return null;
         }
-        const job = await emailQueue.add('send-email', data, {
+        const job = await queue_1.emailQueue.add('send-email', data, {
             attempts: 3,
             backoff: {
                 type: 'exponential',
@@ -19,18 +25,18 @@ export class NotificationService {
             removeOnComplete: 100,
             removeOnFail: 50,
         });
-        logger.info(`Email job queued: ${job.id}`);
+        logger_1.default.info(`Email job queued: ${job.id}`);
         return job.id;
     }
     /**
      * Queue SMS notification
      */
     async queueSms(data) {
-        if (!smsQueue) {
-            logger.warn('SMS queue not available - Redis not configured');
+        if (!queue_1.smsQueue) {
+            logger_1.default.warn('SMS queue not available - Redis not configured');
             return null;
         }
-        const job = await smsQueue.add('send-sms', data, {
+        const job = await queue_1.smsQueue.add('send-sms', data, {
             attempts: 3,
             backoff: {
                 type: 'exponential',
@@ -39,18 +45,18 @@ export class NotificationService {
             removeOnComplete: 100,
             removeOnFail: 50,
         });
-        logger.info(`SMS job queued: ${job.id}`);
+        logger_1.default.info(`SMS job queued: ${job.id}`);
         return job.id;
     }
     /**
      * Queue WhatsApp notification
      */
     async queueWhatsApp(data) {
-        if (!whatsappQueue) {
-            logger.warn('WhatsApp queue not available - Redis not configured');
+        if (!queue_1.whatsappQueue) {
+            logger_1.default.warn('WhatsApp queue not available - Redis not configured');
             return null;
         }
-        const job = await whatsappQueue.add('send-whatsapp', data, {
+        const job = await queue_1.whatsappQueue.add('send-whatsapp', data, {
             attempts: 3,
             backoff: {
                 type: 'exponential',
@@ -59,18 +65,18 @@ export class NotificationService {
             removeOnComplete: 100,
             removeOnFail: 50,
         });
-        logger.info(`WhatsApp job queued: ${job.id}`);
+        logger_1.default.info(`WhatsApp job queued: ${job.id}`);
         return job.id;
     }
     /**
      * Queue PDF generation
      */
     async queuePdfGeneration(data) {
-        if (!pdfQueue) {
-            logger.warn('PDF queue not available - Redis not configured');
+        if (!queue_1.pdfQueue) {
+            logger_1.default.warn('PDF queue not available - Redis not configured');
             return null;
         }
-        const job = await pdfQueue.add('generate-pdf', data, {
+        const job = await queue_1.pdfQueue.add('generate-pdf', data, {
             attempts: 2,
             backoff: {
                 type: 'fixed',
@@ -79,14 +85,14 @@ export class NotificationService {
             removeOnComplete: 50,
             removeOnFail: 20,
         });
-        logger.info(`PDF generation job queued: ${job.id}`);
+        logger_1.default.info(`PDF generation job queued: ${job.id}`);
         return job.id;
     }
     /**
      * Send order confirmation notifications
      */
     async sendOrderConfirmation(orderId) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
             include: {
                 payment: true,
@@ -144,7 +150,7 @@ export class NotificationService {
      * Send payment success notifications
      */
     async sendPaymentSuccess(orderId) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
         });
         if (!order) {
@@ -176,7 +182,7 @@ export class NotificationService {
      * Send payment failed notifications
      */
     async sendPaymentFailed(orderId, reason) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
         });
         if (!order) {
@@ -209,7 +215,7 @@ export class NotificationService {
      * Send delivery update notifications
      */
     async sendDeliveryUpdate(orderId, status) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
             include: {
                 delivery: true,
@@ -263,7 +269,7 @@ export class NotificationService {
      * Log notification to database
      */
     async logNotification(type, recipient, subject, status, orderId, error) {
-        await prisma.notificationLog.create({
+        await database_1.default.notificationLog.create({
             data: {
                 type,
                 recipient,
@@ -277,5 +283,6 @@ export class NotificationService {
         });
     }
 }
-export const notificationService = new NotificationService();
+exports.NotificationService = NotificationService;
+exports.notificationService = new NotificationService();
 //# sourceMappingURL=notification.service.js.map

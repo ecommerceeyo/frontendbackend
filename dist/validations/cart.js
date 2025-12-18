@@ -1,23 +1,26 @@
-import { z } from 'zod';
-import { quantitySchema } from './common';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.clearCartSchema = exports.bulkAddCartItemsSchema = exports.cartItemParamsSchema = exports.updateCartItemSchema = exports.addCartItemSchema = void 0;
+const zod_1 = require("zod");
+const common_1 = require("./common");
 // Add item to cart schema
-export const addCartItemSchema = z.object({
-    productId: z.string().min(1, 'Product ID is required'),
-    quantity: quantitySchema.default(1),
+exports.addCartItemSchema = zod_1.z.object({
+    productId: zod_1.z.string().min(1, 'Product ID is required'),
+    quantity: common_1.quantitySchema.default(1),
 });
 // Update cart item schema
-export const updateCartItemSchema = z.object({
-    quantity: quantitySchema,
+exports.updateCartItemSchema = zod_1.z.object({
+    quantity: common_1.quantitySchema,
 });
 // Cart item ID params
-export const cartItemParamsSchema = z.object({
-    cartId: z.string().min(1, 'Cart ID is required'),
-    itemId: z.string().min(1, 'Item ID is required'),
+exports.cartItemParamsSchema = zod_1.z.object({
+    cartId: zod_1.z.string().min(1, 'Cart ID is required'),
+    itemId: zod_1.z.string().min(1, 'Item ID is required'),
 });
 // Bulk add items to cart
-export const bulkAddCartItemsSchema = z.object({
-    items: z.array(addCartItemSchema).min(1, 'At least one item is required'),
+exports.bulkAddCartItemsSchema = zod_1.z.object({
+    items: zod_1.z.array(exports.addCartItemSchema).min(1, 'At least one item is required'),
 });
 // Clear cart schema (empty body is valid)
-export const clearCartSchema = z.object({}).optional();
+exports.clearCartSchema = zod_1.z.object({}).optional();
 //# sourceMappingURL=cart.js.map

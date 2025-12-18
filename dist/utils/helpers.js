@@ -1,48 +1,66 @@
-import { nanoid } from 'nanoid';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateOrderNumber = generateOrderNumber;
+exports.generateTrackingNumber = generateTrackingNumber;
+exports.generateTransactionId = generateTransactionId;
+exports.generateReferenceId = generateReferenceId;
+exports.generateCartId = generateCartId;
+exports.slugify = slugify;
+exports.formatCurrency = formatCurrency;
+exports.calculateDeliveryFee = calculateDeliveryFee;
+exports.sanitizePhoneNumber = sanitizePhoneNumber;
+exports.maskEmail = maskEmail;
+exports.maskPhone = maskPhone;
+exports.parsePaginationParams = parsePaginationParams;
+exports.isEmpty = isEmpty;
+exports.deepClone = deepClone;
+exports.calculatePercentage = calculatePercentage;
+exports.getDateRange = getDateRange;
+const nanoid_1 = require("nanoid");
 /**
  * Generate a unique order number
  * Format: ORD-YYYYMMDD-XXXXX
  */
-export function generateOrderNumber() {
+function generateOrderNumber() {
     const date = new Date();
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-    const uniqueId = nanoid(5).toUpperCase();
+    const uniqueId = (0, nanoid_1.nanoid)(5).toUpperCase();
     return `ORD-${dateStr}-${uniqueId}`;
 }
 /**
  * Generate a tracking number
  * Format: TRK-XXXXXXXXXXXXX
  */
-export function generateTrackingNumber() {
-    return `TRK-${nanoid(12).toUpperCase()}`;
+function generateTrackingNumber() {
+    return `TRK-${(0, nanoid_1.nanoid)(12).toUpperCase()}`;
 }
 /**
  * Generate a transaction ID
  * Format: TXN-XXXXXXXXXXXXX
  */
-export function generateTransactionId() {
-    return `TXN-${nanoid(12).toUpperCase()}`;
+function generateTransactionId() {
+    return `TXN-${(0, nanoid_1.nanoid)(12).toUpperCase()}`;
 }
 /**
  * Generate a reference ID with custom prefix
  * Format: PREFIX-YYYYMMDD-XXXXX
  */
-export function generateReferenceId(prefix) {
+function generateReferenceId(prefix) {
     const date = new Date();
     const dateStr = date.toISOString().slice(0, 10).replace(/-/g, '');
-    const uniqueId = nanoid(5).toUpperCase();
+    const uniqueId = (0, nanoid_1.nanoid)(5).toUpperCase();
     return `${prefix}-${dateStr}-${uniqueId}`;
 }
 /**
  * Generate a UUID for cart
  */
-export function generateCartId() {
-    return nanoid(21);
+function generateCartId() {
+    return (0, nanoid_1.nanoid)(21);
 }
 /**
  * Slugify a string
  */
-export function slugify(text) {
+function slugify(text) {
     return text
         .toString()
         .toLowerCase()
@@ -56,7 +74,7 @@ export function slugify(text) {
 /**
  * Format currency
  */
-export function formatCurrency(amount, currency = 'XAF') {
+function formatCurrency(amount, currency = 'XAF') {
     if (currency === 'XAF') {
         return `${amount.toLocaleString()} FCFA`;
     }
@@ -68,7 +86,7 @@ export function formatCurrency(amount, currency = 'XAF') {
 /**
  * Calculate delivery fee based on settings
  */
-export function calculateDeliveryFee(subtotal, defaultFee, freeThreshold) {
+function calculateDeliveryFee(subtotal, defaultFee, freeThreshold) {
     if (subtotal >= freeThreshold) {
         return 0;
     }
@@ -77,7 +95,7 @@ export function calculateDeliveryFee(subtotal, defaultFee, freeThreshold) {
 /**
  * Sanitize phone number (Cameroon format)
  */
-export function sanitizePhoneNumber(phone) {
+function sanitizePhoneNumber(phone) {
     // Remove all non-digit characters
     let cleaned = phone.replace(/\D/g, '');
     // Handle different formats
@@ -97,13 +115,13 @@ export function sanitizePhoneNumber(phone) {
 /**
  * Mask sensitive data (for logging)
  */
-export function maskEmail(email) {
+function maskEmail(email) {
     const [localPart, domain] = email.split('@');
     if (localPart.length <= 2)
         return `${localPart}***@${domain}`;
     return `${localPart.slice(0, 2)}***@${domain}`;
 }
-export function maskPhone(phone) {
+function maskPhone(phone) {
     if (phone.length <= 4)
         return '****';
     return phone.slice(0, -4).replace(/./g, '*') + phone.slice(-4);
@@ -111,7 +129,7 @@ export function maskPhone(phone) {
 /**
  * Parse pagination params from query
  */
-export function parsePaginationParams(query) {
+function parsePaginationParams(query) {
     const page = Math.max(1, parseInt(query.page) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(query.limit) || 20));
     const skip = (page - 1) * limit;
@@ -122,7 +140,7 @@ export function parsePaginationParams(query) {
 /**
  * Check if value is empty
  */
-export function isEmpty(value) {
+function isEmpty(value) {
     if (value === null || value === undefined)
         return true;
     if (typeof value === 'string')
@@ -136,13 +154,13 @@ export function isEmpty(value) {
 /**
  * Deep clone an object
  */
-export function deepClone(obj) {
+function deepClone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 /**
  * Calculate percentage
  */
-export function calculatePercentage(value, total) {
+function calculatePercentage(value, total) {
     if (total === 0)
         return 0;
     return Math.round((value / total) * 100 * 100) / 100;
@@ -150,7 +168,7 @@ export function calculatePercentage(value, total) {
 /**
  * Get date range for reports
  */
-export function getDateRange(period) {
+function getDateRange(period) {
     const now = new Date();
     const endDate = new Date(now.setHours(23, 59, 59, 999));
     let startDate;

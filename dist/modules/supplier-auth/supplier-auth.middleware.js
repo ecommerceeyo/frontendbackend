@@ -1,24 +1,33 @@
-import jwt from 'jsonwebtoken';
-import prisma from '../../config/database';
-import config from '../../config';
-import { UnauthorizedError, ForbiddenError } from '../../middleware/errorHandler';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authenticateSupplier = authenticateSupplier;
+exports.requireActiveSupplier = requireActiveSupplier;
+exports.requireSupplierRole = requireSupplierRole;
+exports.ensureSupplierOwnership = ensureSupplierOwnership;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const database_1 = __importDefault(require("../../config/database"));
+const config_1 = __importDefault(require("../../config"));
+const errorHandler_1 = require("../../middleware/errorHandler");
 /**
  * Authenticate supplier admin from JWT token
  */
-export async function authenticateSupplier(req, res, next) {
+async function authenticateSupplier(req, res, next) {
     try {
         const authHeader = req.headers?.authorization;
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            throw new UnauthorizedError('No token provided');
+            throw new errorHandler_1.UnauthorizedError('No token provided');
         }
         const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, config.jwtSecret);
+        const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtSecret);
         // Verify it's a supplier token
         if (decoded.type !== 'supplier') {
-            throw new UnauthorizedError('Invalid token type');
+            throw new errorHandler_1.UnauthorizedError('Invalid token type');
         }
         // Verify supplier admin exists and is active
-        const supplierAdmin = await prisma.supplierAdmin.findUnique({
+        const supplierAdmin = await database_1.default.supplierAdmin.findUnique({
             where: { id: decoded.supplierAdminId },
             include: {
                 supplier: {
@@ -27,7 +36,7 @@ export async function authenticateSupplier(req, res, next) {
             },
         });
         if (!supplierAdmin || !supplierAdmin.active) {
-            throw new UnauthorizedError('Account not found or inactive');
+            throw new errorHandler_1.UnauthorizedError('Account not found or inactive');
         }
         // Attach to request
         req.supplierAdmin = {
@@ -39,8 +48,8 @@ export async function authenticateSupplier(req, res, next) {
         next();
     }
     catch (error) {
-        if (error instanceof jwt.JsonWebTokenError) {
-            next(new UnauthorizedError('Invalid token'));
+        if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
+            next(new errorHandler_1.UnauthorizedError('Invalid token'));
         }
         else {
             next(error);
@@ -50,24 +59,24 @@ export async function authenticateSupplier(req, res, next) {
 /**
  * Require supplier account to be active
  */
-export function requireActiveSupplier(req, res, next) {
+function requireActiveSupplier(req, res, next) {
     const supplier = req.supplier;
     if (!supplier || supplier.status !== 'ACTIVE') {
-        return next(new ForbiddenError('Supplier account is not active'));
+        return next(new errorHandler_1.ForbiddenError('Supplier account is not active'));
     }
     next();
 }
 /**
  * Require specific supplier roles
  */
-export function requireSupplierRole(...allowedRoles) {
+function requireSupplierRole(...allowedRoles) {
     return (req, res, next) => {
         const supplierAdmin = req.supplierAdmin;
         if (!supplierAdmin) {
-            return next(new UnauthorizedError('Not authenticated'));
+            return next(new errorHandler_1.UnauthorizedError('Not authenticated'));
         }
         if (!allowedRoles.includes(supplierAdmin.role)) {
-            return next(new ForbiddenError('Insufficient permissions'));
+            return next(new errorHandler_1.ForbiddenError('Insufficient permissions'));
         }
         next();
     };
@@ -75,12 +84,12 @@ export function requireSupplierRole(...allowedRoles) {
 /**
  * Ensure supplier can only access their own resources
  */
-export function ensureSupplierOwnership(paramName = 'supplierId') {
+function ensureSupplierOwnership(paramName = 'supplierId') {
     return async (req, res, next) => {
         const supplier = req.supplier;
         const requestedSupplierId = req.params[paramName];
         if (requestedSupplierId && requestedSupplierId !== supplier?.id) {
-            return next(new ForbiddenError('Access denied'));
+            return next(new errorHandler_1.ForbiddenError('Access denied'));
         }
         next();
     };

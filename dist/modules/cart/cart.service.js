@@ -1,14 +1,20 @@
-import prisma from '../../config/database';
-import { generateCartId } from '../../utils/helpers';
-import { NotFoundError, AppError } from '../../middleware/errorHandler';
-export class CartService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.cartService = exports.CartService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class CartService {
     /**
      * Create a new cart
      */
     async createCart() {
-        const cart = await prisma.cart.create({
+        const cart = await database_1.default.cart.create({
             data: {
-                cartId: generateCartId(),
+                cartId: (0, helpers_1.generateCartId)(),
             },
             select: {
                 id: true,
@@ -21,7 +27,7 @@ export class CartService {
      * Get cart by cartId (public UUID)
      */
     async getCart(cartId) {
-        const cart = await prisma.cart.findUnique({
+        const cart = await database_1.default.cart.findUnique({
             where: { cartId },
             include: {
                 items: {
@@ -55,7 +61,7 @@ export class CartService {
             },
         });
         if (!cart) {
-            throw new NotFoundError('Cart');
+            throw new errorHandler_1.NotFoundError('Cart');
         }
         return cart;
     }
@@ -79,27 +85,27 @@ export class CartService {
      */
     async addItem(cartId, productId, quantity) {
         // Get the cart
-        const cart = await prisma.cart.findUnique({
+        const cart = await database_1.default.cart.findUnique({
             where: { cartId },
         });
         if (!cart) {
-            throw new NotFoundError('Cart');
+            throw new errorHandler_1.NotFoundError('Cart');
         }
         // Get the product
-        const product = await prisma.product.findUnique({
+        const product = await database_1.default.product.findUnique({
             where: { id: productId },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         if (!product.active) {
-            throw new AppError('Product is not available', 400);
+            throw new errorHandler_1.AppError('Product is not available', 400);
         }
         if (product.stock < quantity) {
-            throw new AppError(`Only ${product.stock} items available in stock`, 400);
+            throw new errorHandler_1.AppError(`Only ${product.stock} items available in stock`, 400);
         }
         // Check if item already exists in cart
-        const existingItem = await prisma.cartItem.findUnique({
+        const existingItem = await database_1.default.cartItem.findUnique({
             where: {
                 cartId_productId: {
                     cartId: cart.id,
@@ -111,9 +117,9 @@ export class CartService {
             // Update quantity
             const newQuantity = existingItem.quantity + quantity;
             if (product.stock < newQuantity) {
-                throw new AppError(`Only ${product.stock} items available in stock`, 400);
+                throw new errorHandler_1.AppError(`Only ${product.stock} items available in stock`, 400);
             }
-            await prisma.cartItem.update({
+            await database_1.default.cartItem.update({
                 where: { id: existingItem.id },
                 data: {
                     quantity: newQuantity,
@@ -124,7 +130,7 @@ export class CartService {
         }
         else {
             // Create new item
-            await prisma.cartItem.create({
+            await database_1.default.cartItem.create({
                 data: {
                     cartId: cart.id,
                     productId,
@@ -136,7 +142,7 @@ export class CartService {
             });
         }
         // Update cart timestamp
-        await prisma.cart.update({
+        await database_1.default.cart.update({
             where: { id: cart.id },
             data: { updatedAt: new Date() },
         });
@@ -146,13 +152,13 @@ export class CartService {
      * Update cart item quantity
      */
     async updateItem(cartId, itemId, quantity) {
-        const cart = await prisma.cart.findUnique({
+        const cart = await database_1.default.cart.findUnique({
             where: { cartId },
         });
         if (!cart) {
-            throw new NotFoundError('Cart');
+            throw new errorHandler_1.NotFoundError('Cart');
         }
-        const item = await prisma.cartItem.findFirst({
+        const item = await database_1.default.cartItem.findFirst({
             where: {
                 id: itemId,
                 cartId: cart.id,
@@ -160,12 +166,12 @@ export class CartService {
             include: { product: true },
         });
         if (!item) {
-            throw new NotFoundError('Cart item');
+            throw new errorHandler_1.NotFoundError('Cart item');
         }
         if (item.product.stock < quantity) {
-            throw new AppError(`Only ${item.product.stock} items available in stock`, 400);
+            throw new errorHandler_1.AppError(`Only ${item.product.stock} items available in stock`, 400);
         }
-        await prisma.cartItem.update({
+        await database_1.default.cartItem.update({
             where: { id: itemId },
             data: {
                 quantity,
@@ -174,7 +180,7 @@ export class CartService {
             },
         });
         // Update cart timestamp
-        await prisma.cart.update({
+        await database_1.default.cart.update({
             where: { id: cart.id },
             data: { updatedAt: new Date() },
         });
@@ -184,26 +190,26 @@ export class CartService {
      * Remove item from cart
      */
     async removeItem(cartId, itemId) {
-        const cart = await prisma.cart.findUnique({
+        const cart = await database_1.default.cart.findUnique({
             where: { cartId },
         });
         if (!cart) {
-            throw new NotFoundError('Cart');
+            throw new errorHandler_1.NotFoundError('Cart');
         }
-        const item = await prisma.cartItem.findFirst({
+        const item = await database_1.default.cartItem.findFirst({
             where: {
                 id: itemId,
                 cartId: cart.id,
             },
         });
         if (!item) {
-            throw new NotFoundError('Cart item');
+            throw new errorHandler_1.NotFoundError('Cart item');
         }
-        await prisma.cartItem.delete({
+        await database_1.default.cartItem.delete({
             where: { id: itemId },
         });
         // Update cart timestamp
-        await prisma.cart.update({
+        await database_1.default.cart.update({
             where: { id: cart.id },
             data: { updatedAt: new Date() },
         });
@@ -213,17 +219,17 @@ export class CartService {
      * Clear all items from cart
      */
     async clearCart(cartId) {
-        const cart = await prisma.cart.findUnique({
+        const cart = await database_1.default.cart.findUnique({
             where: { cartId },
         });
         if (!cart) {
-            throw new NotFoundError('Cart');
+            throw new errorHandler_1.NotFoundError('Cart');
         }
-        await prisma.cartItem.deleteMany({
+        await database_1.default.cartItem.deleteMany({
             where: { cartId: cart.id },
         });
         // Update cart timestamp
-        await prisma.cart.update({
+        await database_1.default.cart.update({
             where: { id: cart.id },
             data: { updatedAt: new Date() },
         });
@@ -233,13 +239,13 @@ export class CartService {
      * Delete cart entirely
      */
     async deleteCart(cartId) {
-        const cart = await prisma.cart.findUnique({
+        const cart = await database_1.default.cart.findUnique({
             where: { cartId },
         });
         if (!cart) {
-            throw new NotFoundError('Cart');
+            throw new errorHandler_1.NotFoundError('Cart');
         }
-        await prisma.cart.delete({
+        await database_1.default.cart.delete({
             where: { id: cart.id },
         });
         return { success: true };
@@ -306,7 +312,7 @@ export class CartService {
     async validateCartForCheckout(cartId) {
         const cart = await this.getCart(cartId);
         if (cart.items.length === 0) {
-            throw new AppError('Cart is empty', 400);
+            throw new errorHandler_1.AppError('Cart is empty', 400);
         }
         const errors = [];
         for (const item of cart.items) {
@@ -318,10 +324,11 @@ export class CartService {
             }
         }
         if (errors.length > 0) {
-            throw new AppError(`Cart validation failed: ${errors.join('; ')}`, 400);
+            throw new errorHandler_1.AppError(`Cart validation failed: ${errors.join('; ')}`, 400);
         }
         return cart;
     }
 }
-export const cartService = new CartService();
+exports.CartService = CartService;
+exports.cartService = new CartService();
 //# sourceMappingURL=cart.service.js.map

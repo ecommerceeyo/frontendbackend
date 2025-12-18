@@ -1,13 +1,19 @@
-import prisma from '../../config/database';
-import { PayoutStatus } from '@prisma/client';
-import { parsePaginationParams } from '../../utils/helpers';
-import { NotFoundError } from '../../middleware/errorHandler';
-export class PayoutService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.payoutService = exports.PayoutService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const client_1 = require("@prisma/client");
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class PayoutService {
     /**
      * Get all payouts (admin)
      */
     async getPayouts(params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = {};
         if (params.supplierId) {
             where.supplierId = params.supplierId;
@@ -25,7 +31,7 @@ export class PayoutService {
             }
         }
         const [payouts, total] = await Promise.all([
-            prisma.supplierPayout.findMany({
+            database_1.default.supplierPayout.findMany({
                 where,
                 include: {
                     supplier: {
@@ -40,7 +46,7 @@ export class PayoutService {
                 skip,
                 take: limit,
             }),
-            prisma.supplierPayout.count({ where }),
+            database_1.default.supplierPayout.count({ where }),
         ]);
         return { payouts, total, page, limit };
     }
@@ -48,7 +54,7 @@ export class PayoutService {
      * Get single payout
      */
     async getPayout(payoutId) {
-        const payout = await prisma.supplierPayout.findUnique({
+        const payout = await database_1.default.supplierPayout.findUnique({
             where: { id: payoutId },
             include: {
                 supplier: {
@@ -64,7 +70,7 @@ export class PayoutService {
             },
         });
         if (!payout) {
-            throw new NotFoundError('Payout');
+            throw new errorHandler_1.NotFoundError('Payout');
         }
         return payout;
     }
@@ -73,7 +79,7 @@ export class PayoutService {
      */
     async generatePayouts(periodStart, periodEnd) {
         // Get all active suppliers
-        const suppliers = await prisma.supplier.findMany({
+        const suppliers = await database_1.default.supplier.findMany({
             where: { status: 'ACTIVE' },
             select: {
                 id: true,
@@ -84,7 +90,7 @@ export class PayoutService {
         const payouts = [];
         for (const supplier of suppliers) {
             // Calculate earnings for this period
-            const orderItems = await prisma.orderItem.findMany({
+            const orderItems = await database_1.default.orderItem.findMany({
                 where: {
                     supplierId: supplier.id,
                     fulfillmentStatus: 'DELIVERED',
@@ -105,7 +111,7 @@ export class PayoutService {
             const commissionAmount = orderItems.reduce((sum, item) => sum + item.commissionAmount.toNumber(), 0);
             const netAmount = grossAmount - commissionAmount;
             // Check if payout already exists for this period
-            const existingPayout = await prisma.supplierPayout.findFirst({
+            const existingPayout = await database_1.default.supplierPayout.findFirst({
                 where: {
                     supplierId: supplier.id,
                     periodStart,
@@ -115,7 +121,7 @@ export class PayoutService {
             if (existingPayout)
                 continue;
             // Create payout record
-            const payout = await prisma.supplierPayout.create({
+            const payout = await database_1.default.supplierPayout.create({
                 data: {
                     supplierId: supplier.id,
                     periodStart,
@@ -137,11 +143,11 @@ export class PayoutService {
      * Update payout status
      */
     async updatePayoutStatus(payoutId, status, paymentReference, notes) {
-        const payout = await prisma.supplierPayout.findUnique({
+        const payout = await database_1.default.supplierPayout.findUnique({
             where: { id: payoutId },
         });
         if (!payout) {
-            throw new NotFoundError('Payout');
+            throw new errorHandler_1.NotFoundError('Payout');
         }
         const updates = {
             status,
@@ -152,10 +158,10 @@ export class PayoutService {
         if (notes) {
             updates.notes = notes;
         }
-        if (status === PayoutStatus.COMPLETED) {
+        if (status === client_1.PayoutStatus.COMPLETED) {
             updates.paidAt = new Date();
         }
-        const updatedPayout = await prisma.supplierPayout.update({
+        const updatedPayout = await database_1.default.supplierPayout.update({
             where: { id: payoutId },
             data: updates,
             include: {
@@ -171,23 +177,23 @@ export class PayoutService {
      */
     async getPayoutStats() {
         const [pending, processing, completed, failed] = await Promise.all([
-            prisma.supplierPayout.aggregate({
-                where: { status: PayoutStatus.PENDING },
+            database_1.default.supplierPayout.aggregate({
+                where: { status: client_1.PayoutStatus.PENDING },
                 _sum: { netAmount: true },
                 _count: true,
             }),
-            prisma.supplierPayout.aggregate({
-                where: { status: PayoutStatus.PROCESSING },
+            database_1.default.supplierPayout.aggregate({
+                where: { status: client_1.PayoutStatus.PROCESSING },
                 _sum: { netAmount: true },
                 _count: true,
             }),
-            prisma.supplierPayout.aggregate({
-                where: { status: PayoutStatus.COMPLETED },
+            database_1.default.supplierPayout.aggregate({
+                where: { status: client_1.PayoutStatus.COMPLETED },
                 _sum: { netAmount: true },
                 _count: true,
             }),
-            prisma.supplierPayout.aggregate({
-                where: { status: PayoutStatus.FAILED },
+            database_1.default.supplierPayout.aggregate({
+                where: { status: client_1.PayoutStatus.FAILED },
                 _sum: { netAmount: true },
                 _count: true,
             }),
@@ -219,14 +225,14 @@ export class PayoutService {
         thisMonth.setDate(1);
         thisMonth.setHours(0, 0, 0, 0);
         const [lifetimeEarnings, monthlyEarnings, pendingPayouts, completedPayouts,] = await Promise.all([
-            prisma.orderItem.aggregate({
+            database_1.default.orderItem.aggregate({
                 where: {
                     supplierId,
                     fulfillmentStatus: 'DELIVERED',
                 },
                 _sum: { totalPrice: true },
             }),
-            prisma.orderItem.aggregate({
+            database_1.default.orderItem.aggregate({
                 where: {
                     supplierId,
                     fulfillmentStatus: 'DELIVERED',
@@ -234,17 +240,17 @@ export class PayoutService {
                 },
                 _sum: { totalPrice: true },
             }),
-            prisma.supplierPayout.aggregate({
+            database_1.default.supplierPayout.aggregate({
                 where: {
                     supplierId,
-                    status: PayoutStatus.PENDING,
+                    status: client_1.PayoutStatus.PENDING,
                 },
                 _sum: { netAmount: true },
             }),
-            prisma.supplierPayout.aggregate({
+            database_1.default.supplierPayout.aggregate({
                 where: {
                     supplierId,
-                    status: PayoutStatus.COMPLETED,
+                    status: client_1.PayoutStatus.COMPLETED,
                 },
                 _sum: { netAmount: true },
             }),
@@ -257,5 +263,6 @@ export class PayoutService {
         };
     }
 }
-export const payoutService = new PayoutService();
+exports.PayoutService = PayoutService;
+exports.payoutService = new PayoutService();
 //# sourceMappingURL=payout.service.js.map

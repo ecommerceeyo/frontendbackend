@@ -1,4 +1,14 @@
-export function successResponse(res, data, message, statusCode = 200) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.successResponse = successResponse;
+exports.errorResponse = errorResponse;
+exports.paginatedResponse = paginatedResponse;
+exports.notFoundResponse = notFoundResponse;
+exports.unauthorizedResponse = unauthorizedResponse;
+exports.forbiddenResponse = forbiddenResponse;
+exports.validationErrorResponse = validationErrorResponse;
+exports.serverErrorResponse = serverErrorResponse;
+function successResponse(res, data, message, statusCode = 200) {
     const response = {
         success: true,
         data,
@@ -6,7 +16,7 @@ export function successResponse(res, data, message, statusCode = 200) {
     };
     return res.status(statusCode).json(response);
 }
-export function errorResponse(res, message, statusCode = 400, errors) {
+function errorResponse(res, message, statusCode = 400, errors) {
     const response = {
         success: false,
         error: message,
@@ -14,7 +24,7 @@ export function errorResponse(res, message, statusCode = 400, errors) {
     };
     return res.status(statusCode).json(response);
 }
-export function paginatedResponse(res, data, page, limit, total) {
+function paginatedResponse(res, data, page, limit, total) {
     const totalPages = Math.ceil(total / limit);
     const response = {
         data,
@@ -28,19 +38,19 @@ export function paginatedResponse(res, data, page, limit, total) {
     };
     return res.status(200).json({ success: true, ...response });
 }
-export function notFoundResponse(res, resource = 'Resource') {
+function notFoundResponse(res, resource = 'Resource') {
     return errorResponse(res, `${resource} not found`, 404);
 }
-export function unauthorizedResponse(res, message = 'Unauthorized') {
+function unauthorizedResponse(res, message = 'Unauthorized') {
     return errorResponse(res, message, 401);
 }
-export function forbiddenResponse(res, message = 'Forbidden') {
+function forbiddenResponse(res, message = 'Forbidden') {
     return errorResponse(res, message, 403);
 }
-export function validationErrorResponse(res, errors) {
+function validationErrorResponse(res, errors) {
     return errorResponse(res, 'Validation failed', 400, errors);
 }
-export function serverErrorResponse(res, error) {
+function serverErrorResponse(res, error) {
     console.error('Server error:', error);
     return errorResponse(res, process.env.NODE_ENV === 'development' && error
         ? error.message

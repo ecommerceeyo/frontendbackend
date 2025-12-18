@@ -1,9 +1,16 @@
-import Redis from 'ioredis';
-import config from './index';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.redis = void 0;
+const ioredis_1 = __importDefault(require("ioredis"));
+const index_1 = __importDefault(require("./index"));
 let redis = null;
+exports.redis = redis;
 try {
-    if (config.redisUrl) {
-        redis = new Redis(config.redisUrl, {
+    if (index_1.default.redisUrl) {
+        exports.redis = redis = new ioredis_1.default(index_1.default.redisUrl, {
             maxRetriesPerRequest: null,
             enableReadyCheck: false,
             lazyConnect: true,
@@ -17,7 +24,7 @@ try {
         // Try to connect but don't block startup
         redis.connect().catch((err) => {
             console.warn('Redis not available (background jobs disabled):', err.message);
-            redis = null;
+            exports.redis = redis = null;
         });
     }
     else {
@@ -26,8 +33,7 @@ try {
 }
 catch (err) {
     console.warn('Redis initialization failed - background jobs disabled');
-    redis = null;
+    exports.redis = redis = null;
 }
-export { redis };
-export default redis;
+exports.default = redis;
 //# sourceMappingURL=redis.js.map

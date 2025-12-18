@@ -1,7 +1,13 @@
-import prisma from '../../config/database';
-import { slugify } from '../../utils/helpers';
-import { NotFoundError } from '../../middleware/errorHandler';
-export class CategoryService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.categoryService = exports.CategoryService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class CategoryService {
     /**
      * Get all categories (with optional filters)
      */
@@ -13,7 +19,7 @@ export class CategoryService {
         if (params.active !== undefined) {
             where.active = params.active;
         }
-        const categories = await prisma.category.findMany({
+        const categories = await database_1.default.category.findMany({
             where,
             include: {
                 children: {
@@ -39,7 +45,7 @@ export class CategoryService {
         if (activeOnly) {
             where.active = true;
         }
-        const categories = await prisma.category.findMany({
+        const categories = await database_1.default.category.findMany({
             where,
             include: {
                 children: {
@@ -61,7 +67,7 @@ export class CategoryService {
      * Get category by ID or slug
      */
     async getCategoryByIdOrSlug(idOrSlug) {
-        const category = await prisma.category.findFirst({
+        const category = await database_1.default.category.findFirst({
             where: {
                 OR: [{ id: idOrSlug }, { slug: idOrSlug }],
             },
@@ -77,7 +83,7 @@ export class CategoryService {
             },
         });
         if (!category) {
-            throw new NotFoundError('Category');
+            throw new errorHandler_1.NotFoundError('Category');
         }
         return category;
     }
@@ -85,9 +91,9 @@ export class CategoryService {
      * Create a new category
      */
     async createCategory(data) {
-        const slug = data.slug || slugify(data.name);
+        const slug = data.slug || (0, helpers_1.slugify)(data.name);
         // Check if slug exists
-        const existingCategory = await prisma.category.findUnique({
+        const existingCategory = await database_1.default.category.findUnique({
             where: { slug },
         });
         if (existingCategory) {
@@ -95,14 +101,14 @@ export class CategoryService {
         }
         // Validate parentId if provided
         if (data.parentId) {
-            const parentCategory = await prisma.category.findUnique({
+            const parentCategory = await database_1.default.category.findUnique({
                 where: { id: data.parentId },
             });
             if (!parentCategory) {
-                throw new NotFoundError('Parent category');
+                throw new errorHandler_1.NotFoundError('Parent category');
             }
         }
-        const category = await prisma.category.create({
+        const category = await database_1.default.category.create({
             data: {
                 name: data.name,
                 slug,
@@ -123,19 +129,19 @@ export class CategoryService {
      * Update a category
      */
     async updateCategory(id, data) {
-        const existingCategory = await prisma.category.findUnique({
+        const existingCategory = await database_1.default.category.findUnique({
             where: { id },
         });
         if (!existingCategory) {
-            throw new NotFoundError('Category');
+            throw new errorHandler_1.NotFoundError('Category');
         }
         // Handle slug update
         let slug = data.slug;
         if (data.name && !data.slug) {
-            slug = slugify(data.name);
+            slug = (0, helpers_1.slugify)(data.name);
         }
         if (slug && slug !== existingCategory.slug) {
-            const slugExists = await prisma.category.findFirst({
+            const slugExists = await database_1.default.category.findFirst({
                 where: { slug, NOT: { id } },
             });
             if (slugExists) {
@@ -147,14 +153,14 @@ export class CategoryService {
             if (data.parentId === id) {
                 throw new Error('A category cannot be its own parent');
             }
-            const parentCategory = await prisma.category.findUnique({
+            const parentCategory = await database_1.default.category.findUnique({
                 where: { id: data.parentId },
             });
             if (!parentCategory) {
-                throw new NotFoundError('Parent category');
+                throw new errorHandler_1.NotFoundError('Parent category');
             }
         }
-        const category = await prisma.category.update({
+        const category = await database_1.default.category.update({
             where: { id },
             data: {
                 name: data.name,
@@ -176,7 +182,7 @@ export class CategoryService {
      * Delete a category
      */
     async deleteCategory(id) {
-        const category = await prisma.category.findUnique({
+        const category = await database_1.default.category.findUnique({
             where: { id },
             include: {
                 children: true,
@@ -184,7 +190,7 @@ export class CategoryService {
             },
         });
         if (!category) {
-            throw new NotFoundError('Category');
+            throw new errorHandler_1.NotFoundError('Category');
         }
         if (category.children.length > 0) {
             throw new Error('Cannot delete a category with child categories');
@@ -192,9 +198,10 @@ export class CategoryService {
         if (category.products.length > 0) {
             throw new Error('Cannot delete a category with associated products');
         }
-        await prisma.category.delete({ where: { id } });
+        await database_1.default.category.delete({ where: { id } });
         return { success: true };
     }
 }
-export const categoryService = new CategoryService();
+exports.CategoryService = CategoryService;
+exports.categoryService = new CategoryService();
 //# sourceMappingURL=category.service.js.map

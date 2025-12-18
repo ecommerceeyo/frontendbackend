@@ -1,12 +1,15 @@
-import { payoutService } from './payout.service';
-export class PayoutController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.payoutController = exports.PayoutController = void 0;
+const payout_service_1 = require("./payout.service");
+class PayoutController {
     /**
      * Get all payouts
      */
     async getPayouts(req, res, next) {
         try {
             const { page, limit, supplierId, status, startDate, endDate } = req.query;
-            const result = await payoutService.getPayouts({
+            const result = await payout_service_1.payoutService.getPayouts({
                 page: page ? parseInt(page) : undefined,
                 limit: limit ? parseInt(limit) : undefined,
                 supplierId,
@@ -37,7 +40,7 @@ export class PayoutController {
     async getPayout(req, res, next) {
         try {
             const { payoutId } = req.params;
-            const payout = await payoutService.getPayout(payoutId);
+            const payout = await payout_service_1.payoutService.getPayout(payoutId);
             res.json({
                 success: true,
                 data: payout,
@@ -59,7 +62,7 @@ export class PayoutController {
                     error: 'Period start and end dates are required',
                 });
             }
-            const payouts = await payoutService.generatePayouts(new Date(periodStart), new Date(periodEnd));
+            const payouts = await payout_service_1.payoutService.generatePayouts(new Date(periodStart), new Date(periodEnd));
             res.status(201).json({
                 success: true,
                 data: payouts,
@@ -83,7 +86,7 @@ export class PayoutController {
                     error: 'Status is required',
                 });
             }
-            const payout = await payoutService.updatePayoutStatus(payoutId, status, transactionId, notes);
+            const payout = await payout_service_1.payoutService.updatePayoutStatus(payoutId, status, transactionId, notes);
             res.json({
                 success: true,
                 data: payout,
@@ -98,7 +101,7 @@ export class PayoutController {
      */
     async getPayoutStats(req, res, next) {
         try {
-            const stats = await payoutService.getPayoutStats();
+            const stats = await payout_service_1.payoutService.getPayoutStats();
             res.json({
                 success: true,
                 data: stats,
@@ -114,7 +117,7 @@ export class PayoutController {
     async getSupplierEarnings(req, res, next) {
         try {
             const { supplierId } = req.params;
-            const earnings = await payoutService.getSupplierEarnings(supplierId);
+            const earnings = await payout_service_1.payoutService.getSupplierEarnings(supplierId);
             res.json({
                 success: true,
                 data: earnings,
@@ -125,5 +128,6 @@ export class PayoutController {
         }
     }
 }
-export const payoutController = new PayoutController();
+exports.PayoutController = PayoutController;
+exports.payoutController = new PayoutController();
 //# sourceMappingURL=payout.controller.js.map

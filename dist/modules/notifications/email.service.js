@@ -1,6 +1,16 @@
-import nodemailer from 'nodemailer';
-import config from '../../config';
-import logger from '../../utils/logger';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendEmail = sendEmail;
+exports.sendOrderConfirmationEmail = sendOrderConfirmationEmail;
+exports.sendPaymentSuccessEmail = sendPaymentSuccessEmail;
+exports.sendDeliveryUpdateEmail = sendDeliveryUpdateEmail;
+exports.sendWelcomeEmail = sendWelcomeEmail;
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const config_1 = __importDefault(require("../../config"));
+const logger_1 = __importDefault(require("../../utils/logger"));
 // Email templates
 const templates = {
     order_confirmation: (data) => ({
@@ -37,7 +47,7 @@ const templates = {
                   <tr style="border-bottom: 1px solid #eee;">
                     <td style="padding: 12px; color: #333; font-size: 14px;">${item.name}</td>
                     <td style="padding: 12px; text-align: center; color: #333; font-size: 14px;">${item.quantity}</td>
-                    <td style="padding: 12px; text-align: right; color: #333; font-size: 14px;">${Number(item.price).toLocaleString()} FCFA</td>
+                    <td style="padding: 12px; text-align: right; color: #333; font-size: 14px;">${Number(item.price).toLocaleString()} GHC</td>
                   </tr>
                 `).join('')}
               </tbody>
@@ -47,15 +57,15 @@ const templates = {
               <table style="width: 100%;">
                 <tr>
                   <td style="padding: 8px 0; color: #666; font-size: 14px;">Subtotal:</td>
-                  <td style="padding: 8px 0; text-align: right; color: #333; font-size: 14px;">${Number(data.subtotal).toLocaleString()} FCFA</td>
+                  <td style="padding: 8px 0; text-align: right; color: #333; font-size: 14px;">${Number(data.subtotal).toLocaleString()} GHC</td>
                 </tr>
                 <tr>
                   <td style="padding: 8px 0; color: #666; font-size: 14px;">Delivery Fee:</td>
-                  <td style="padding: 8px 0; text-align: right; color: #333; font-size: 14px;">${Number(data.deliveryFee).toLocaleString()} FCFA</td>
+                  <td style="padding: 8px 0; text-align: right; color: #333; font-size: 14px;">${Number(data.deliveryFee).toLocaleString()} GHC</td>
                 </tr>
                 <tr style="font-weight: bold;">
                   <td style="padding: 12px 0; color: #1A1A2E; font-size: 16px;">Total:</td>
-                  <td style="padding: 12px 0; text-align: right; color: #1A1A2E; font-size: 16px;">${Number(data.total).toLocaleString()} FCFA</td>
+                  <td style="padding: 12px 0; text-align: right; color: #1A1A2E; font-size: 16px;">${Number(data.total).toLocaleString()} GHC</td>
                 </tr>
               </table>
             </div>
@@ -192,49 +202,49 @@ const templates = {
 };
 // Create transporter
 const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: config.smtp.host,
-        port: config.smtp.port,
-        secure: config.smtp.port === 465,
+    return nodemailer_1.default.createTransport({
+        host: config_1.default.smtp.host,
+        port: config_1.default.smtp.port,
+        secure: config_1.default.smtp.port === 465,
         auth: {
-            user: config.smtp.user,
-            pass: config.smtp.pass,
+            user: config_1.default.smtp.user,
+            pass: config_1.default.smtp.pass,
         },
     });
 };
 /**
  * Send email directly (without Redis queue)
  */
-export async function sendEmail(options) {
+async function sendEmail(options) {
     const { to, template, data } = options;
     // Check if SMTP is configured
-    if (!config.smtp.user || !config.smtp.pass) {
-        logger.warn('SMTP not configured - email not sent', { to, template });
+    if (!config_1.default.smtp.user || !config_1.default.smtp.pass) {
+        logger_1.default.warn('SMTP not configured - email not sent', { to, template });
         return false;
     }
     try {
         const transporter = createTransporter();
         const emailContent = templates[template](data);
         await transporter.sendMail({
-            from: `"${config.smtp.fromName}" <${config.smtp.fromEmail}>`,
+            from: `"${config_1.default.smtp.fromName}" <${config_1.default.smtp.fromEmail}>`,
             to,
             subject: emailContent.subject,
             html: emailContent.html,
         });
-        logger.info(`Email sent successfully to ${to}`, { template });
+        logger_1.default.info(`Email sent successfully to ${to}`, { template });
         return true;
     }
     catch (error) {
-        logger.error('Failed to send email', { to, template, error });
+        logger_1.default.error('Failed to send email', { to, template, error });
         return false;
     }
 }
 /**
  * Send order confirmation email
  */
-export async function sendOrderConfirmationEmail(order) {
+async function sendOrderConfirmationEmail(order) {
     if (!order.customerEmail) {
-        logger.info('No customer email provided - skipping email notification');
+        logger_1.default.info('No customer email provided - skipping email notification');
         return false;
     }
     return sendEmail({
@@ -257,7 +267,7 @@ export async function sendOrderConfirmationEmail(order) {
 /**
  * Send payment success email
  */
-export async function sendPaymentSuccessEmail(order) {
+async function sendPaymentSuccessEmail(order) {
     if (!order.customerEmail) {
         return false;
     }
@@ -275,7 +285,7 @@ export async function sendPaymentSuccessEmail(order) {
 /**
  * Send delivery update email
  */
-export async function sendDeliveryUpdateEmail(order) {
+async function sendDeliveryUpdateEmail(order) {
     if (!order.customerEmail) {
         return false;
     }
@@ -294,7 +304,7 @@ export async function sendDeliveryUpdateEmail(order) {
 /**
  * Send welcome email to new customer
  */
-export async function sendWelcomeEmail(customer) {
+async function sendWelcomeEmail(customer) {
     if (!customer.customerEmail) {
         return false;
     }

@@ -1,5 +1,8 @@
-import { supplierAuthService } from './supplier-auth.service';
-export class SupplierAuthController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.supplierAuthController = exports.SupplierAuthController = void 0;
+const supplier_auth_service_1 = require("./supplier-auth.service");
+class SupplierAuthController {
     /**
      * Register a new supplier
      */
@@ -12,7 +15,7 @@ export class SupplierAuthController {
                     error: 'Missing required fields: supplierName, email, ownerPassword',
                 });
             }
-            const result = await supplierAuthService.register(data);
+            const result = await supplier_auth_service_1.supplierAuthService.register(data);
             return res.status(201).json({
                 success: true,
                 data: result,
@@ -35,7 +38,7 @@ export class SupplierAuthController {
                     error: 'Email and password are required',
                 });
             }
-            const result = await supplierAuthService.login({ email, password });
+            const result = await supplier_auth_service_1.supplierAuthService.login({ email, password });
             return res.json({
                 success: true,
                 data: result,
@@ -57,7 +60,7 @@ export class SupplierAuthController {
                     error: 'Not authenticated',
                 });
             }
-            const profile = await supplierAuthService.getMe(supplierAdminId);
+            const profile = await supplier_auth_service_1.supplierAuthService.getMe(supplierAdminId);
             // Format response to match frontend expectations
             const { supplier, ...adminData } = profile;
             res.json({
@@ -85,7 +88,7 @@ export class SupplierAuthController {
                     error: 'Current password and new password are required',
                 });
             }
-            await supplierAuthService.changePassword(supplierAdminId, currentPassword, newPassword);
+            await supplier_auth_service_1.supplierAuthService.changePassword(supplierAdminId, currentPassword, newPassword);
             res.json({
                 success: true,
                 message: 'Password changed successfully',
@@ -101,7 +104,7 @@ export class SupplierAuthController {
     async getStaff(req, res, next) {
         try {
             const supplierId = req.supplier?.id;
-            const staff = await supplierAuthService.getStaff(supplierId);
+            const staff = await supplier_auth_service_1.supplierAuthService.getStaff(supplierId);
             res.json({
                 success: true,
                 data: staff,
@@ -124,7 +127,7 @@ export class SupplierAuthController {
                     error: 'Email, name, and password are required',
                 });
             }
-            const staff = await supplierAuthService.createStaff(supplierId, {
+            const staff = await supplier_auth_service_1.supplierAuthService.createStaff(supplierId, {
                 email,
                 name,
                 password,
@@ -154,7 +157,7 @@ export class SupplierAuthController {
                     error: 'Active status is required',
                 });
             }
-            const staff = await supplierAuthService.updateStaffStatus(supplierId, staffId, active);
+            const staff = await supplier_auth_service_1.supplierAuthService.updateStaffStatus(supplierId, staffId, active);
             res.json({
                 success: true,
                 data: staff,
@@ -171,7 +174,7 @@ export class SupplierAuthController {
         try {
             const supplierId = req.supplier?.id;
             const { staffId } = req.params;
-            await supplierAuthService.deleteStaff(supplierId, staffId);
+            await supplier_auth_service_1.supplierAuthService.deleteStaff(supplierId, staffId);
             res.json({
                 success: true,
                 message: 'Staff member deleted successfully',
@@ -182,5 +185,6 @@ export class SupplierAuthController {
         }
     }
 }
-export const supplierAuthController = new SupplierAuthController();
+exports.SupplierAuthController = SupplierAuthController;
+exports.supplierAuthController = new SupplierAuthController();
 //# sourceMappingURL=supplier-auth.controller.js.map

@@ -1,3 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.sanitizeBody = sanitizeBody;
+exports.sanitizeQuery = sanitizeQuery;
+exports.sanitize = sanitize;
+exports.stripHtml = stripHtml;
+exports.normalizeWhitespace = normalizeWhitespace;
+exports.sanitizeFilename = sanitizeFilename;
 /**
  * Sanitize string input to prevent XSS
  */
@@ -40,7 +48,7 @@ function sanitizeObject(obj) {
 /**
  * Middleware to sanitize request body
  */
-export function sanitizeBody(req, _res, next) {
+function sanitizeBody(req, _res, next) {
     if (req.body && typeof req.body === 'object') {
         req.body = sanitizeObject(req.body);
     }
@@ -49,7 +57,7 @@ export function sanitizeBody(req, _res, next) {
 /**
  * Middleware to sanitize query parameters
  */
-export function sanitizeQuery(req, _res, next) {
+function sanitizeQuery(req, _res, next) {
     if (req.query && typeof req.query === 'object') {
         req.query = sanitizeObject(req.query);
     }
@@ -58,7 +66,7 @@ export function sanitizeQuery(req, _res, next) {
 /**
  * Combined sanitization middleware
  */
-export function sanitize(req, res, next) {
+function sanitize(req, res, next) {
     sanitizeBody(req, res, () => {
         sanitizeQuery(req, res, next);
     });
@@ -66,19 +74,19 @@ export function sanitize(req, res, next) {
 /**
  * Strip HTML tags from string
  */
-export function stripHtml(str) {
+function stripHtml(str) {
     return str.replace(/<[^>]*>/g, '');
 }
 /**
  * Normalize whitespace
  */
-export function normalizeWhitespace(str) {
+function normalizeWhitespace(str) {
     return str.replace(/\s+/g, ' ').trim();
 }
 /**
  * Sanitize filename
  */
-export function sanitizeFilename(filename) {
+function sanitizeFilename(filename) {
     return filename
         .replace(/[^a-zA-Z0-9._-]/g, '_')
         .replace(/_{2,}/g, '_')

@@ -1,6 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
-export const specificationService = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.specificationService = void 0;
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
+exports.specificationService = {
     async getAll() {
         return prisma.specificationTemplate.findMany({
             orderBy: [{ group: 'asc' }, { sortOrder: 'asc' }, { label: 'asc' }],

@@ -1,7 +1,14 @@
-import { Worker } from 'bullmq';
-import { connection } from '../../config/queue';
-import logger from '../../utils/logger';
-import { notificationService } from './notification.service';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.smsWorker = void 0;
+exports.startSmsWorker = startSmsWorker;
+const bullmq_1 = require("bullmq");
+const queue_1 = require("../../config/queue");
+const logger_1 = __importDefault(require("../../utils/logger"));
+const notification_service_1 = require("./notification.service");
 // Twilio SMS Provider
 class TwilioProvider {
     client;
@@ -12,7 +19,7 @@ class TwilioProvider {
             this.client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
         }
         catch {
-            logger.warn('Twilio not configured');
+            logger_1.default.warn('Twilio not configured');
         }
     }
     async send(to, message) {
@@ -40,7 +47,7 @@ class AfricasTalkingProvider {
             this.client = africastalking.SMS;
         }
         catch {
-            logger.warn("Africa's Talking not configured");
+            logger_1.default.warn("Africa's Talking not configured");
         }
     }
     async send(to, message) {
@@ -58,7 +65,7 @@ class AfricasTalkingProvider {
 // Mock SMS Provider for development
 class MockSmsProvider {
     async send(to, message) {
-        logger.info(`[MOCK SMS] To: ${to}, Message: ${message}`);
+        logger_1.default.info(`[MOCK SMS] To: ${to}, Message: ${message}`);
         return { messageId: `mock-${Date.now()}` };
     }
 }
@@ -78,20 +85,20 @@ const smsProvider = getSmsProvider();
 // Process SMS job
 async function processSms(job) {
     const { to, message, orderId } = job.data;
-    logger.info(`Processing SMS job ${job.id} - To: ${to}`);
+    logger_1.default.info(`Processing SMS job ${job.id} - To: ${to}`);
     try {
         // Format phone number (ensure it has country code)
         const formattedPhone = formatPhoneNumber(to);
         const result = await smsProvider.send(formattedPhone, message);
         // Log success
-        await notificationService.logNotification('SMS', to, message.substring(0, 100), 'SENT', orderId);
-        logger.info(`SMS sent successfully: ${job.id}, MessageId: ${result.messageId}`);
+        await notification_service_1.notificationService.logNotification('SMS', to, message.substring(0, 100), 'SENT', orderId);
+        logger_1.default.info(`SMS sent successfully: ${job.id}, MessageId: ${result.messageId}`);
     }
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         // Log failure
-        await notificationService.logNotification('SMS', to, message.substring(0, 100), 'FAILED', orderId, errorMessage);
-        logger.error(`SMS failed: ${job.id}`, error);
+        await notification_service_1.notificationService.logNotification('SMS', to, message.substring(0, 100), 'FAILED', orderId, errorMessage);
+        logger_1.default.error(`SMS failed: ${job.id}`, error);
         throw error;
     }
 }
@@ -119,8 +126,8 @@ function formatPhoneNumber(phone) {
     return `+237${cleaned}`;
 }
 // Create and export worker
-export const smsWorker = new Worker('sms', processSms, {
-    connection,
+exports.smsWorker = new bullmq_1.Worker('sms', processSms, {
+    connection: queue_1.connection,
     concurrency: 10,
     limiter: {
         max: 20,
@@ -128,16 +135,16 @@ export const smsWorker = new Worker('sms', processSms, {
     },
 });
 // Worker event handlers
-smsWorker.on('completed', (job) => {
-    logger.info(`SMS job ${job.id} completed`);
+exports.smsWorker.on('completed', (job) => {
+    logger_1.default.info(`SMS job ${job.id} completed`);
 });
-smsWorker.on('failed', (job, err) => {
-    logger.error(`SMS job ${job?.id} failed:`, err);
+exports.smsWorker.on('failed', (job, err) => {
+    logger_1.default.error(`SMS job ${job?.id} failed:`, err);
 });
-smsWorker.on('error', (err) => {
-    logger.error('SMS worker error:', err);
+exports.smsWorker.on('error', (err) => {
+    logger_1.default.error('SMS worker error:', err);
 });
-export function startSmsWorker() {
-    logger.info('SMS worker started');
+function startSmsWorker() {
+    logger_1.default.info('SMS worker started');
 }
 //# sourceMappingURL=sms.worker.js.map

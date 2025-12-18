@@ -1,8 +1,16 @@
-import { ZodError } from 'zod';
-import { Prisma } from '@prisma/client';
-import logger from '../utils/logger';
-import { errorResponse, validationErrorResponse, serverErrorResponse } from '../utils/response';
-export class AppError extends Error {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ValidationError = exports.ForbiddenError = exports.UnauthorizedError = exports.NotFoundError = exports.AppError = void 0;
+exports.errorHandler = errorHandler;
+exports.notFoundHandler = notFoundHandler;
+const zod_1 = require("zod");
+const client_1 = require("@prisma/client");
+const logger_1 = __importDefault(require("../utils/logger"));
+const response_1 = require("../utils/response");
+class AppError extends Error {
     statusCode;
     isOperational;
     constructor(message, statusCode = 400) {
@@ -12,77 +20,82 @@ export class AppError extends Error {
         Error.captureStackTrace(this, this.constructor);
     }
 }
-export class NotFoundError extends AppError {
+exports.AppError = AppError;
+class NotFoundError extends AppError {
     constructor(resource = 'Resource') {
         super(`${resource} not found`, 404);
     }
 }
-export class UnauthorizedError extends AppError {
+exports.NotFoundError = NotFoundError;
+class UnauthorizedError extends AppError {
     constructor(message = 'Unauthorized') {
         super(message, 401);
     }
 }
-export class ForbiddenError extends AppError {
+exports.UnauthorizedError = UnauthorizedError;
+class ForbiddenError extends AppError {
     constructor(message = 'Forbidden') {
         super(message, 403);
     }
 }
-export class ValidationError extends AppError {
+exports.ForbiddenError = ForbiddenError;
+class ValidationError extends AppError {
     errors;
     constructor(errors) {
         super('Validation failed', 400);
         this.errors = errors;
     }
 }
-export function errorHandler(err, req, res, _next) {
-    logger.error(`${req.method} ${req.path}`, err);
+exports.ValidationError = ValidationError;
+function errorHandler(err, req, res, _next) {
+    logger_1.default.error(`${req.method} ${req.path}`, err);
     // Handle Zod validation errors
-    if (err instanceof ZodError) {
+    if (err instanceof zod_1.ZodError) {
         const errors = err.errors.map((e) => ({
             field: e.path.join('.'),
             message: e.message,
         }));
-        return validationErrorResponse(res, errors);
+        return (0, response_1.validationErrorResponse)(res, errors);
     }
     // Handle custom validation errors
     if (err instanceof ValidationError) {
-        return validationErrorResponse(res, err.errors);
+        return (0, response_1.validationErrorResponse)(res, err.errors);
     }
     // Handle custom app errors
     if (err instanceof AppError) {
-        return errorResponse(res, err.message, err.statusCode);
+        return (0, response_1.errorResponse)(res, err.message, err.statusCode);
     }
     // Handle Prisma errors
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err instanceof client_1.Prisma.PrismaClientKnownRequestError) {
         switch (err.code) {
             case 'P2002':
                 // Unique constraint violation
                 const field = err.meta?.target?.join(', ') || 'field';
-                return errorResponse(res, `A record with this ${field} already exists`, 409);
+                return (0, response_1.errorResponse)(res, `A record with this ${field} already exists`, 409);
             case 'P2025':
                 // Record not found
-                return errorResponse(res, 'Record not found', 404);
+                return (0, response_1.errorResponse)(res, 'Record not found', 404);
             case 'P2003':
                 // Foreign key constraint failed
-                return errorResponse(res, 'Related record not found', 400);
+                return (0, response_1.errorResponse)(res, 'Related record not found', 400);
             default:
-                return errorResponse(res, 'Database error', 500);
+                return (0, response_1.errorResponse)(res, 'Database error', 500);
         }
     }
-    if (err instanceof Prisma.PrismaClientValidationError) {
-        return errorResponse(res, 'Invalid data provided', 400);
+    if (err instanceof client_1.Prisma.PrismaClientValidationError) {
+        return (0, response_1.errorResponse)(res, 'Invalid data provided', 400);
     }
     // Handle JWT errors
     if (err.name === 'JsonWebTokenError') {
-        return errorResponse(res, 'Invalid token', 401);
+        return (0, response_1.errorResponse)(res, 'Invalid token', 401);
     }
     if (err.name === 'TokenExpiredError') {
-        return errorResponse(res, 'Token expired', 401);
+        return (0, response_1.errorResponse)(res, 'Token expired', 401);
     }
     // Default server error
-    return serverErrorResponse(res, err);
+    return (0, response_1.serverErrorResponse)(res, err);
 }
-export function notFoundHandler(req, res) {
-    return errorResponse(res, `Route ${req.method} ${req.path} not found`, 404);
+function notFoundHandler(req, res) {
+    return (0, response_1.errorResponse)(res, `Route ${req.method} ${req.path} not found`, 404);
 }
 //# sourceMappingURL=errorHandler.js.map

@@ -1,30 +1,36 @@
-import prisma from '../../config/database';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import config from '../../config';
-import { NotFoundError, AppError, UnauthorizedError } from '../../middleware/errorHandler';
-import { sendWelcomeEmail } from '../notifications/email.service';
-export class CustomerAuthService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.customerAuthService = exports.CustomerAuthService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = __importDefault(require("../../config"));
+const errorHandler_1 = require("../../middleware/errorHandler");
+const email_service_1 = require("../notifications/email.service");
+class CustomerAuthService {
     /**
      * Register a new customer
      */
     async register(data) {
         // Check if email already exists
-        const existingByEmail = await prisma.customer.findUnique({
+        const existingByEmail = await database_1.default.customer.findUnique({
             where: { email: data.email },
         });
         if (existingByEmail) {
-            throw new AppError('An account with this email already exists', 409);
+            throw new errorHandler_1.AppError('An account with this email already exists', 409);
         }
         // Check if phone already exists
-        const existingByPhone = await prisma.customer.findUnique({
+        const existingByPhone = await database_1.default.customer.findUnique({
             where: { phone: data.phone },
         });
         if (existingByPhone) {
-            throw new AppError('An account with this phone number already exists', 409);
+            throw new errorHandler_1.AppError('An account with this phone number already exists', 409);
         }
-        const passwordHash = await bcrypt.hash(data.password, 10);
-        const customer = await prisma.customer.create({
+        const passwordHash = await bcryptjs_1.default.hash(data.password, 10);
+        const customer = await database_1.default.customer.create({
             data: {
                 email: data.email,
                 phone: data.phone,
@@ -44,7 +50,7 @@ export class CustomerAuthService {
             },
         });
         // Send welcome email (async, don't wait for it)
-        sendWelcomeEmail({
+        (0, email_service_1.sendWelcomeEmail)({
             customerName: customer.name,
             customerEmail: customer.email,
             customerPhone: customer.phone,
@@ -65,30 +71,30 @@ export class CustomerAuthService {
     async login(data) {
         let customer;
         if (data.email) {
-            customer = await prisma.customer.findUnique({
+            customer = await database_1.default.customer.findUnique({
                 where: { email: data.email },
             });
         }
         else if (data.phone) {
-            customer = await prisma.customer.findUnique({
+            customer = await database_1.default.customer.findUnique({
                 where: { phone: data.phone },
             });
         }
         else {
-            throw new AppError('Email or phone is required', 400);
+            throw new errorHandler_1.AppError('Email or phone is required', 400);
         }
         if (!customer) {
-            throw new UnauthorizedError('Invalid credentials');
+            throw new errorHandler_1.UnauthorizedError('Invalid credentials');
         }
         if (!customer.active) {
-            throw new UnauthorizedError('Account is disabled');
+            throw new errorHandler_1.UnauthorizedError('Account is disabled');
         }
-        const isValidPassword = await bcrypt.compare(data.password, customer.passwordHash);
+        const isValidPassword = await bcryptjs_1.default.compare(data.password, customer.passwordHash);
         if (!isValidPassword) {
-            throw new UnauthorizedError('Invalid credentials');
+            throw new errorHandler_1.UnauthorizedError('Invalid credentials');
         }
         // Update last login
-        await prisma.customer.update({
+        await database_1.default.customer.update({
             where: { id: customer.id },
             data: { lastLoginAt: new Date() },
         });
@@ -114,13 +120,13 @@ export class CustomerAuthService {
      */
     async googleAuth(data) {
         // Check if customer exists with this email
-        let customer = await prisma.customer.findUnique({
+        let customer = await database_1.default.customer.findUnique({
             where: { email: data.email },
         });
         if (customer) {
             // Customer exists - update Google ID if not set and log in
             if (!customer.googleId) {
-                customer = await prisma.customer.update({
+                customer = await database_1.default.customer.update({
                     where: { id: customer.id },
                     data: {
                         googleId: data.googleId,
@@ -132,23 +138,23 @@ export class CustomerAuthService {
             }
             else {
                 // Just update last login
-                await prisma.customer.update({
+                await database_1.default.customer.update({
                     where: { id: customer.id },
                     data: { lastLoginAt: new Date() },
                 });
             }
             if (!customer.active) {
-                throw new UnauthorizedError('Account is disabled');
+                throw new errorHandler_1.UnauthorizedError('Account is disabled');
             }
         }
         else {
             // Create new customer with Google account
             // Generate a random password hash (user can set password later if needed)
             const randomPassword = Math.random().toString(36).slice(-12);
-            const passwordHash = await bcrypt.hash(randomPassword, 10);
+            const passwordHash = await bcryptjs_1.default.hash(randomPassword, 10);
             // Generate a placeholder phone (user must update this later)
             const placeholderPhone = `google_${data.googleId}`;
-            customer = await prisma.customer.create({
+            customer = await database_1.default.customer.create({
                 data: {
                     email: data.email,
                     phone: placeholderPhone,
@@ -161,7 +167,7 @@ export class CustomerAuthService {
                 },
             });
             // Send welcome email to new Google sign-up (async, don't wait)
-            sendWelcomeEmail({
+            (0, email_service_1.sendWelcomeEmail)({
                 customerName: customer.name,
                 customerEmail: customer.email,
                 customerPhone: null, // No real phone yet for Google sign-ups
@@ -193,7 +199,7 @@ export class CustomerAuthService {
      * Get customer profile
      */
     async getProfile(customerId) {
-        const customer = await prisma.customer.findUnique({
+        const customer = await database_1.default.customer.findUnique({
             where: { id: customerId },
             select: {
                 id: true,
@@ -212,7 +218,7 @@ export class CustomerAuthService {
             },
         });
         if (!customer) {
-            throw new NotFoundError('Customer');
+            throw new errorHandler_1.NotFoundError('Customer');
         }
         return customer;
     }
@@ -220,31 +226,31 @@ export class CustomerAuthService {
      * Update customer profile
      */
     async updateProfile(customerId, data) {
-        const customer = await prisma.customer.findUnique({
+        const customer = await database_1.default.customer.findUnique({
             where: { id: customerId },
         });
         if (!customer) {
-            throw new NotFoundError('Customer');
+            throw new errorHandler_1.NotFoundError('Customer');
         }
         // Check email uniqueness if updating
         if (data.email && data.email !== customer.email) {
-            const existing = await prisma.customer.findUnique({
+            const existing = await database_1.default.customer.findUnique({
                 where: { email: data.email },
             });
             if (existing) {
-                throw new AppError('Email is already in use', 409);
+                throw new errorHandler_1.AppError('Email is already in use', 409);
             }
         }
         // Check phone uniqueness if updating
         if (data.phone && data.phone !== customer.phone) {
-            const existing = await prisma.customer.findUnique({
+            const existing = await database_1.default.customer.findUnique({
                 where: { phone: data.phone },
             });
             if (existing) {
-                throw new AppError('Phone number is already in use', 409);
+                throw new errorHandler_1.AppError('Phone number is already in use', 409);
             }
         }
-        const updatedCustomer = await prisma.customer.update({
+        const updatedCustomer = await database_1.default.customer.update({
             where: { id: customerId },
             data: {
                 ...data,
@@ -270,18 +276,18 @@ export class CustomerAuthService {
      * Change password
      */
     async changePassword(customerId, currentPassword, newPassword) {
-        const customer = await prisma.customer.findUnique({
+        const customer = await database_1.default.customer.findUnique({
             where: { id: customerId },
         });
         if (!customer) {
-            throw new NotFoundError('Customer');
+            throw new errorHandler_1.NotFoundError('Customer');
         }
-        const isValidPassword = await bcrypt.compare(currentPassword, customer.passwordHash);
+        const isValidPassword = await bcryptjs_1.default.compare(currentPassword, customer.passwordHash);
         if (!isValidPassword) {
-            throw new UnauthorizedError('Current password is incorrect');
+            throw new errorHandler_1.UnauthorizedError('Current password is incorrect');
         }
-        const passwordHash = await bcrypt.hash(newPassword, 10);
-        await prisma.customer.update({
+        const passwordHash = await bcryptjs_1.default.hash(newPassword, 10);
+        await database_1.default.customer.update({
             where: { id: customerId },
             data: { passwordHash },
         });
@@ -291,7 +297,7 @@ export class CustomerAuthService {
      * Get customer addresses
      */
     async getAddresses(customerId) {
-        return prisma.customerAddress.findMany({
+        return database_1.default.customerAddress.findMany({
             where: { customerId },
             orderBy: [{ isDefault: 'desc' }, { createdAt: 'desc' }],
         });
@@ -302,16 +308,16 @@ export class CustomerAuthService {
     async addAddress(customerId, data) {
         // If this is the default address, unset other defaults
         if (data.isDefault) {
-            await prisma.customerAddress.updateMany({
+            await database_1.default.customerAddress.updateMany({
                 where: { customerId, isDefault: true },
                 data: { isDefault: false },
             });
         }
         // Check if this is the first address, make it default
-        const addressCount = await prisma.customerAddress.count({
+        const addressCount = await database_1.default.customerAddress.count({
             where: { customerId },
         });
-        const address = await prisma.customerAddress.create({
+        const address = await database_1.default.customerAddress.create({
             data: {
                 customerId,
                 ...data,
@@ -324,20 +330,20 @@ export class CustomerAuthService {
      * Update address
      */
     async updateAddress(customerId, addressId, data) {
-        const address = await prisma.customerAddress.findFirst({
+        const address = await database_1.default.customerAddress.findFirst({
             where: { id: addressId, customerId },
         });
         if (!address) {
-            throw new NotFoundError('Address');
+            throw new errorHandler_1.NotFoundError('Address');
         }
         // If setting as default, unset other defaults
         if (data.isDefault) {
-            await prisma.customerAddress.updateMany({
+            await database_1.default.customerAddress.updateMany({
                 where: { customerId, isDefault: true, id: { not: addressId } },
                 data: { isDefault: false },
             });
         }
-        const updatedAddress = await prisma.customerAddress.update({
+        const updatedAddress = await database_1.default.customerAddress.update({
             where: { id: addressId },
             data,
         });
@@ -347,23 +353,23 @@ export class CustomerAuthService {
      * Delete address
      */
     async deleteAddress(customerId, addressId) {
-        const address = await prisma.customerAddress.findFirst({
+        const address = await database_1.default.customerAddress.findFirst({
             where: { id: addressId, customerId },
         });
         if (!address) {
-            throw new NotFoundError('Address');
+            throw new errorHandler_1.NotFoundError('Address');
         }
-        await prisma.customerAddress.delete({
+        await database_1.default.customerAddress.delete({
             where: { id: addressId },
         });
         // If deleted address was default, make another one default
         if (address.isDefault) {
-            const firstAddress = await prisma.customerAddress.findFirst({
+            const firstAddress = await database_1.default.customerAddress.findFirst({
                 where: { customerId },
                 orderBy: { createdAt: 'asc' },
             });
             if (firstAddress) {
-                await prisma.customerAddress.update({
+                await database_1.default.customerAddress.update({
                     where: { id: firstAddress.id },
                     data: { isDefault: true },
                 });
@@ -377,7 +383,7 @@ export class CustomerAuthService {
     async getOrders(customerId, page = 1, limit = 10) {
         const skip = (page - 1) * limit;
         const [orders, total] = await Promise.all([
-            prisma.order.findMany({
+            database_1.default.order.findMany({
                 where: { customerId },
                 include: {
                     payment: true,
@@ -387,7 +393,7 @@ export class CustomerAuthService {
                 skip,
                 take: limit,
             }),
-            prisma.order.count({ where: { customerId } }),
+            database_1.default.order.count({ where: { customerId } }),
         ]);
         return {
             orders,
@@ -401,7 +407,7 @@ export class CustomerAuthService {
      * Get a single order (must belong to customer)
      */
     async getOrder(customerId, orderId) {
-        const order = await prisma.order.findFirst({
+        const order = await database_1.default.order.findFirst({
             where: { id: orderId, customerId },
             include: {
                 payment: true,
@@ -422,7 +428,7 @@ export class CustomerAuthService {
             },
         });
         if (!order) {
-            throw new NotFoundError('Order');
+            throw new errorHandler_1.NotFoundError('Order');
         }
         return order;
     }
@@ -431,11 +437,11 @@ export class CustomerAuthService {
      */
     async linkCartToCustomer(customerId, cartId) {
         // Check if customer already has an active cart
-        const existingCart = await prisma.cart.findFirst({
+        const existingCart = await database_1.default.cart.findFirst({
             where: { customerId },
             include: { items: true },
         });
-        const guestCart = await prisma.cart.findUnique({
+        const guestCart = await database_1.default.cart.findUnique({
             where: { cartId },
             include: { items: true },
         });
@@ -449,14 +455,14 @@ export class CustomerAuthService {
                 const existingItem = existingCart.items.find(i => i.productId === item.productId);
                 if (existingItem) {
                     // Update quantity
-                    await prisma.cartItem.update({
+                    await database_1.default.cartItem.update({
                         where: { id: existingItem.id },
                         data: { quantity: existingItem.quantity + item.quantity },
                     });
                 }
                 else {
                     // Add new item
-                    await prisma.cartItem.create({
+                    await database_1.default.cartItem.create({
                         data: {
                             cartId: existingCart.id,
                             productId: item.productId,
@@ -469,15 +475,15 @@ export class CustomerAuthService {
                 }
             }
             // Delete guest cart
-            await prisma.cart.delete({ where: { id: guestCart.id } });
-            return prisma.cart.findUnique({
+            await database_1.default.cart.delete({ where: { id: guestCart.id } });
+            return database_1.default.cart.findUnique({
                 where: { id: existingCart.id },
                 include: { items: { include: { product: true } } },
             });
         }
         else {
             // No existing cart, just assign guest cart to customer
-            return prisma.cart.update({
+            return database_1.default.cart.update({
                 where: { id: guestCart.id },
                 data: { customerId },
                 include: { items: { include: { product: true } } },
@@ -488,23 +494,23 @@ export class CustomerAuthService {
      * Generate JWT token for customer
      */
     generateToken(customer) {
-        return jwt.sign({
+        return jsonwebtoken_1.default.sign({
             type: 'customer',
             customerId: customer.id,
             email: customer.email,
             phone: customer.phone,
-        }, config.jwtSecret, { expiresIn: config.jwtExpiresIn });
+        }, config_1.default.jwtSecret, { expiresIn: config_1.default.jwtExpiresIn });
     }
     /**
      * Verify JWT token and get customer
      */
     async verifyToken(token) {
         try {
-            const decoded = jwt.verify(token, config.jwtSecret);
+            const decoded = jsonwebtoken_1.default.verify(token, config_1.default.jwtSecret);
             if (decoded.type !== 'customer') {
-                throw new UnauthorizedError('Invalid token type');
+                throw new errorHandler_1.UnauthorizedError('Invalid token type');
             }
-            const customer = await prisma.customer.findUnique({
+            const customer = await database_1.default.customer.findUnique({
                 where: { id: decoded.customerId },
                 select: {
                     id: true,
@@ -515,17 +521,18 @@ export class CustomerAuthService {
                 },
             });
             if (!customer || !customer.active) {
-                throw new UnauthorizedError('Customer not found or inactive');
+                throw new errorHandler_1.UnauthorizedError('Customer not found or inactive');
             }
             return customer;
         }
         catch (error) {
-            if (error instanceof UnauthorizedError) {
+            if (error instanceof errorHandler_1.UnauthorizedError) {
                 throw error;
             }
-            throw new UnauthorizedError('Invalid or expired token');
+            throw new errorHandler_1.UnauthorizedError('Invalid or expired token');
         }
     }
 }
-export const customerAuthService = new CustomerAuthService();
+exports.CustomerAuthService = CustomerAuthService;
+exports.customerAuthService = new CustomerAuthService();
 //# sourceMappingURL=customer-auth.service.js.map

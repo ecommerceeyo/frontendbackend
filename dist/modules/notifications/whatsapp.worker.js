@@ -1,7 +1,14 @@
-import { Worker } from 'bullmq';
-import { connection } from '../../config/queue';
-import logger from '../../utils/logger';
-import { notificationService } from './notification.service';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.whatsappWorker = void 0;
+exports.startWhatsAppWorker = startWhatsAppWorker;
+const bullmq_1 = require("bullmq");
+const queue_1 = require("../../config/queue");
+const logger_1 = __importDefault(require("../../utils/logger"));
+const notification_service_1 = require("./notification.service");
 // Meta WhatsApp Business API Provider
 class MetaWhatsAppProvider {
     phoneNumberId;
@@ -81,7 +88,7 @@ class TwilioWhatsAppProvider {
             this.client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
         }
         catch {
-            logger.warn('Twilio not configured for WhatsApp');
+            logger_1.default.warn('Twilio not configured for WhatsApp');
         }
     }
     async sendTemplate(to, template, data) {
@@ -111,7 +118,7 @@ class TwilioWhatsAppProvider {
 // Mock WhatsApp Provider for development
 class MockWhatsAppProvider {
     async sendTemplate(to, template, data) {
-        logger.info(`[MOCK WHATSAPP] To: ${to}, Template: ${template}, Data:`, data);
+        logger_1.default.info(`[MOCK WHATSAPP] To: ${to}, Template: ${template}, Data:`, data);
         return { messageId: `mock-wa-${Date.now()}` };
     }
 }
@@ -131,20 +138,20 @@ const whatsappProvider = getWhatsAppProvider();
 // Process WhatsApp job
 async function processWhatsApp(job) {
     const { to, template, data, orderId } = job.data;
-    logger.info(`Processing WhatsApp job ${job.id} - Template: ${template}, To: ${to}`);
+    logger_1.default.info(`Processing WhatsApp job ${job.id} - Template: ${template}, To: ${to}`);
     try {
         // Format phone number
         const formattedPhone = formatWhatsAppNumber(to);
         const result = await whatsappProvider.sendTemplate(formattedPhone, template, data);
         // Log success
-        await notificationService.logNotification('WHATSAPP', to, `Template: ${template}`, 'SENT', orderId);
-        logger.info(`WhatsApp sent successfully: ${job.id}, MessageId: ${result.messageId}`);
+        await notification_service_1.notificationService.logNotification('WHATSAPP', to, `Template: ${template}`, 'SENT', orderId);
+        logger_1.default.info(`WhatsApp sent successfully: ${job.id}, MessageId: ${result.messageId}`);
     }
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         // Log failure
-        await notificationService.logNotification('WHATSAPP', to, `Template: ${template}`, 'FAILED', orderId, errorMessage);
-        logger.error(`WhatsApp failed: ${job.id}`, error);
+        await notification_service_1.notificationService.logNotification('WHATSAPP', to, `Template: ${template}`, 'FAILED', orderId, errorMessage);
+        logger_1.default.error(`WhatsApp failed: ${job.id}`, error);
         throw error;
     }
 }
@@ -167,8 +174,8 @@ function formatWhatsAppNumber(phone) {
     return cleaned;
 }
 // Create and export worker
-export const whatsappWorker = new Worker('whatsapp', processWhatsApp, {
-    connection,
+exports.whatsappWorker = new bullmq_1.Worker('whatsapp', processWhatsApp, {
+    connection: queue_1.connection,
     concurrency: 5,
     limiter: {
         max: 10,
@@ -176,16 +183,16 @@ export const whatsappWorker = new Worker('whatsapp', processWhatsApp, {
     },
 });
 // Worker event handlers
-whatsappWorker.on('completed', (job) => {
-    logger.info(`WhatsApp job ${job.id} completed`);
+exports.whatsappWorker.on('completed', (job) => {
+    logger_1.default.info(`WhatsApp job ${job.id} completed`);
 });
-whatsappWorker.on('failed', (job, err) => {
-    logger.error(`WhatsApp job ${job?.id} failed:`, err);
+exports.whatsappWorker.on('failed', (job, err) => {
+    logger_1.default.error(`WhatsApp job ${job?.id} failed:`, err);
 });
-whatsappWorker.on('error', (err) => {
-    logger.error('WhatsApp worker error:', err);
+exports.whatsappWorker.on('error', (err) => {
+    logger_1.default.error('WhatsApp worker error:', err);
 });
-export function startWhatsAppWorker() {
-    logger.info('WhatsApp worker started');
+function startWhatsAppWorker() {
+    logger_1.default.info('WhatsApp worker started');
 }
 //# sourceMappingURL=whatsapp.worker.js.map

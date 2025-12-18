@@ -1,16 +1,22 @@
-import prisma from '../../config/database';
-import { ReportStatus, PaymentStatus, DeliveryStatus } from '@prisma/client';
-import { getDateRange } from '../../utils/helpers';
-import { reportQueue } from '../../config/queue';
-import { NotFoundError } from '../../middleware/errorHandler';
-export class ReportService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.reportService = exports.ReportService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const client_1 = require("@prisma/client");
+const helpers_1 = require("../../utils/helpers");
+const queue_1 = require("../../config/queue");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class ReportService {
     /**
      * Get dashboard statistics
      */
     async getDashboardStats(period = 'month') {
-        const { startDate, endDate } = getDateRange(period);
+        const { startDate, endDate } = (0, helpers_1.getDateRange)(period);
         // Get orders in date range
-        const orders = await prisma.order.findMany({
+        const orders = await database_1.default.order.findMany({
             where: {
                 createdAt: {
                     gte: startDate,
@@ -23,22 +29,22 @@ export class ReportService {
         });
         // Calculate stats
         const totalOrders = orders.length;
-        const pendingOrders = orders.filter((o) => o.paymentStatus === PaymentStatus.PENDING).length;
-        const completedOrders = orders.filter((o) => o.paymentStatus === PaymentStatus.PAID).length;
+        const pendingOrders = orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.PENDING).length;
+        const completedOrders = orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID).length;
         const totalRevenue = orders
-            .filter((o) => o.paymentStatus === PaymentStatus.PAID)
+            .filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID)
             .reduce((sum, o) => sum + Number(o.total), 0);
         const averageOrderValue = completedOrders > 0 ? totalRevenue / completedOrders : 0;
         // Orders by status
         const ordersByStatus = {
-            [PaymentStatus.PENDING]: pendingOrders,
-            [PaymentStatus.PAID]: completedOrders,
-            [PaymentStatus.FAILED]: orders.filter((o) => o.paymentStatus === PaymentStatus.FAILED).length,
+            [client_1.PaymentStatus.PENDING]: pendingOrders,
+            [client_1.PaymentStatus.PAID]: completedOrders,
+            [client_1.PaymentStatus.FAILED]: orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.FAILED).length,
         };
         // Revenue by payment method
         const revenueByPaymentMethod = {};
         orders
-            .filter((o) => o.paymentStatus === PaymentStatus.PAID)
+            .filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID)
             .forEach((o) => {
             const method = o.paymentMethod;
             revenueByPaymentMethod[method] = (revenueByPaymentMethod[method] || 0) + Number(o.total);
@@ -63,7 +69,7 @@ export class ReportService {
             .sort((a, b) => b.revenue - a.revenue)
             .slice(0, 5);
         // Recent orders
-        const recentOrders = await prisma.order.findMany({
+        const recentOrders = await database_1.default.order.findMany({
             orderBy: { createdAt: 'desc' },
             take: 10,
             select: {
@@ -94,7 +100,7 @@ export class ReportService {
      * Get sales report data
      */
     async getSalesReport(startDate, endDate, groupBy = 'day') {
-        const dailyReports = await prisma.dailySalesReport.findMany({
+        const dailyReports = await database_1.default.dailySalesReport.findMany({
             where: {
                 date: {
                     gte: startDate,
@@ -105,13 +111,13 @@ export class ReportService {
         });
         // If no pre-aggregated data, calculate from orders
         if (dailyReports.length === 0) {
-            const orders = await prisma.order.findMany({
+            const orders = await database_1.default.order.findMany({
                 where: {
                     createdAt: {
                         gte: startDate,
                         lte: endDate,
                     },
-                    paymentStatus: PaymentStatus.PAID,
+                    paymentStatus: client_1.PaymentStatus.PAID,
                 },
                 orderBy: { createdAt: 'asc' },
             });
@@ -145,7 +151,7 @@ export class ReportService {
     async getInventoryReport(options = {}) {
         const where = { active: true };
         if (options.lowStock) {
-            where.stock = { lte: prisma.product.fields.lowStockThreshold };
+            where.stock = { lte: database_1.default.product.fields.lowStockThreshold };
         }
         if (options.outOfStock) {
             where.stock = 0;
@@ -155,7 +161,7 @@ export class ReportService {
                 some: { categoryId: options.categoryId },
             };
         }
-        const products = await prisma.product.findMany({
+        const products = await database_1.default.product.findMany({
             where,
             include: {
                 categories: {
@@ -187,7 +193,7 @@ export class ReportService {
      * Get order report
      */
     async getOrderReport(startDate, endDate) {
-        const orders = await prisma.order.findMany({
+        const orders = await database_1.default.order.findMany({
             where: {
                 createdAt: {
                     gte: startDate,
@@ -216,11 +222,11 @@ export class ReportService {
                 (summary.byDeliveryStatus[order.deliveryStatus] || 0) + 1;
             summary.byPaymentMethod[order.paymentMethod] =
                 (summary.byPaymentMethod[order.paymentMethod] || 0) + 1;
-            if (order.paymentStatus === PaymentStatus.PAID) {
+            if (order.paymentStatus === client_1.PaymentStatus.PAID) {
                 summary.totalRevenue += Number(order.total);
             }
         });
-        const paidOrders = orders.filter((o) => o.paymentStatus === PaymentStatus.PAID).length;
+        const paidOrders = orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID).length;
         summary.averageOrderValue = paidOrders > 0 ? summary.totalRevenue / paidOrders : 0;
         return {
             summary,
@@ -242,17 +248,17 @@ export class ReportService {
      */
     async generateReport(type, parameters, adminId) {
         // Create report record
-        const report = await prisma.report.create({
+        const report = await database_1.default.report.create({
             data: {
                 name: `${type} Report - ${parameters.startDate.toLocaleDateString()} to ${parameters.endDate.toLocaleDateString()}`,
                 type,
-                status: ReportStatus.PENDING,
+                status: client_1.ReportStatus.PENDING,
                 parameters,
                 generatedBy: adminId,
             },
         });
         // Queue report generation
-        await reportQueue.add('generate-report', {
+        await queue_1.reportQueue.add('generate-report', {
             type,
             parameters: {
                 startDate: parameters.startDate.toISOString(),
@@ -268,7 +274,7 @@ export class ReportService {
      * Get report by ID
      */
     async getReportById(id) {
-        const report = await prisma.report.findUnique({
+        const report = await database_1.default.report.findUnique({
             where: { id },
             include: {
                 admin: {
@@ -277,7 +283,7 @@ export class ReportService {
             },
         });
         if (!report) {
-            throw new NotFoundError('Report');
+            throw new errorHandler_1.NotFoundError('Report');
         }
         return report;
     }
@@ -296,7 +302,7 @@ export class ReportService {
             where.status = params.status;
         }
         const [reports, total] = await Promise.all([
-            prisma.report.findMany({
+            database_1.default.report.findMany({
                 where,
                 include: {
                     admin: {
@@ -307,7 +313,7 @@ export class ReportService {
                 skip,
                 take: limit,
             }),
-            prisma.report.count({ where }),
+            database_1.default.report.count({ where }),
         ]);
         return { reports, total, page, limit };
     }
@@ -319,7 +325,7 @@ export class ReportService {
         startOfDay.setHours(0, 0, 0, 0);
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
-        const orders = await prisma.order.findMany({
+        const orders = await database_1.default.order.findMany({
             where: {
                 createdAt: {
                     gte: startOfDay,
@@ -330,22 +336,22 @@ export class ReportService {
         // Calculate metrics
         const stats = {
             totalOrders: orders.length,
-            completedOrders: orders.filter((o) => o.paymentStatus === PaymentStatus.PAID).length,
+            completedOrders: orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID).length,
             cancelledOrders: 0, // No cancelled status in current schema
-            pendingOrders: orders.filter((o) => o.paymentStatus === PaymentStatus.PENDING).length,
+            pendingOrders: orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.PENDING).length,
             grossSales: orders.reduce((sum, o) => sum + Number(o.subtotal), 0),
             totalDiscount: orders.reduce((sum, o) => sum + Number(o.discount), 0),
             totalDeliveryFees: orders.reduce((sum, o) => sum + Number(o.deliveryFee), 0),
             netSales: orders
-                .filter((o) => o.paymentStatus === PaymentStatus.PAID)
+                .filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID)
                 .reduce((sum, o) => sum + Number(o.total), 0),
-            momoPayments: orders.filter((o) => o.paymentMethod === 'MOMO' && o.paymentStatus === PaymentStatus.PAID).length,
+            momoPayments: orders.filter((o) => o.paymentMethod === 'MOMO' && o.paymentStatus === client_1.PaymentStatus.PAID).length,
             momoAmount: orders
-                .filter((o) => o.paymentMethod === 'MOMO' && o.paymentStatus === PaymentStatus.PAID)
+                .filter((o) => o.paymentMethod === 'MOMO' && o.paymentStatus === client_1.PaymentStatus.PAID)
                 .reduce((sum, o) => sum + Number(o.total), 0),
-            codPayments: orders.filter((o) => o.paymentMethod === 'COD' && o.paymentStatus === PaymentStatus.PAID).length,
+            codPayments: orders.filter((o) => o.paymentMethod === 'COD' && o.paymentStatus === client_1.PaymentStatus.PAID).length,
             codAmount: orders
-                .filter((o) => o.paymentMethod === 'COD' && o.paymentStatus === PaymentStatus.PAID)
+                .filter((o) => o.paymentMethod === 'COD' && o.paymentStatus === client_1.PaymentStatus.PAID)
                 .reduce((sum, o) => sum + Number(o.total), 0),
             itemsSold: orders.reduce((sum, o) => {
                 const items = o.itemsSnapshot;
@@ -357,7 +363,7 @@ export class ReportService {
             })).size,
         };
         // Upsert daily report
-        await prisma.dailySalesReport.upsert({
+        await database_1.default.dailySalesReport.upsert({
             where: { date: startOfDay },
             update: stats,
             create: {
@@ -371,7 +377,7 @@ export class ReportService {
      * Get comprehensive report summary for admin reports page
      */
     async getReportSummary(startDate, endDate) {
-        const orders = await prisma.order.findMany({
+        const orders = await database_1.default.order.findMany({
             where: {
                 createdAt: {
                     gte: startDate,
@@ -395,17 +401,17 @@ export class ReportService {
         const periodDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
         const previousStartDate = new Date(startDate.getTime() - periodDays * 24 * 60 * 60 * 1000);
         const previousEndDate = new Date(startDate);
-        const previousOrders = await prisma.order.findMany({
+        const previousOrders = await database_1.default.order.findMany({
             where: {
                 createdAt: {
                     gte: previousStartDate,
                     lt: previousEndDate,
                 },
-                paymentStatus: PaymentStatus.PAID,
+                paymentStatus: client_1.PaymentStatus.PAID,
             },
         });
         // Calculate summary metrics
-        const paidOrders = orders.filter((o) => o.paymentStatus === PaymentStatus.PAID);
+        const paidOrders = orders.filter((o) => o.paymentStatus === client_1.PaymentStatus.PAID);
         const totalRevenue = paidOrders.reduce((sum, o) => sum + Number(o.total), 0);
         const totalOrders = orders.length;
         const averageOrderValue = paidOrders.length > 0 ? totalRevenue / paidOrders.length : 0;
@@ -420,9 +426,9 @@ export class ReportService {
         // Count preorder orders
         const preorderOrders = orders.filter((o) => o.items?.some((item) => item.product?.isPreorder)).length;
         // Calculate average delivery days using Delivery table
-        const deliveries = await prisma.delivery.findMany({
+        const deliveries = await database_1.default.delivery.findMany({
             where: {
-                status: DeliveryStatus.DELIVERED,
+                status: client_1.DeliveryStatus.DELIVERED,
                 deliveredAt: { not: null },
                 order: {
                     createdAt: { gte: startDate, lte: endDate },
@@ -476,12 +482,12 @@ export class ReportService {
             .sort((a, b) => b.date.localeCompare(a.date))
             .slice(0, 14);
         // Orders by status
-        const ordersByStatus = Object.values(DeliveryStatus).map((status) => ({
+        const ordersByStatus = Object.values(client_1.DeliveryStatus).map((status) => ({
             status: status.toLowerCase(),
             count: orders.filter((o) => o.deliveryStatus === status).length,
         }));
         // Delivery performance by supplier
-        const deliveredItems = await prisma.orderItem.findMany({
+        const deliveredItems = await database_1.default.orderItem.findMany({
             where: {
                 fulfillmentStatus: 'DELIVERED',
                 deliveredAt: { not: null },
@@ -527,7 +533,7 @@ export class ReportService {
             late: stats.late,
         }));
         // Preorder products
-        const preorderProducts = await prisma.product.findMany({
+        const preorderProducts = await database_1.default.product.findMany({
             where: {
                 isPreorder: true,
                 active: true,
@@ -578,5 +584,6 @@ export class ReportService {
         };
     }
 }
-export const reportService = new ReportService();
+exports.ReportService = ReportService;
+exports.reportService = new ReportService();
 //# sourceMappingURL=report.service.js.map

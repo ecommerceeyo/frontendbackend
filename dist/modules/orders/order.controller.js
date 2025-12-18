@@ -1,12 +1,22 @@
-import { orderService } from './order.service';
-import { successResponse, paginatedResponse } from '../../utils/response';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.checkout = checkout;
+exports.trackOrder = trackOrder;
+exports.getOrder = getOrder;
+exports.getOrders = getOrders;
+exports.getOrderAdmin = getOrderAdmin;
+exports.updateOrderStatus = updateOrderStatus;
+exports.markAsShipped = markAsShipped;
+exports.generateInvoice = generateInvoice;
+const order_service_1 = require("./order.service");
+const response_1 = require("../../utils/response");
 /**
  * Create order from checkout (public)
  */
-export async function checkout(req, res, next) {
+async function checkout(req, res, next) {
     try {
-        const order = await orderService.checkout(req.body);
-        return successResponse(res, order, 'Order placed successfully', 201);
+        const order = await order_service_1.orderService.checkout(req.body);
+        return (0, response_1.successResponse)(res, order, 'Order placed successfully', 201);
     }
     catch (error) {
         next(error);
@@ -15,15 +25,15 @@ export async function checkout(req, res, next) {
 /**
  * Track order (public)
  */
-export async function trackOrder(req, res, next) {
+async function trackOrder(req, res, next) {
     try {
         const { orderNumber, phone, email } = req.query;
-        const orders = await orderService.trackOrder({
+        const orders = await order_service_1.orderService.trackOrder({
             orderNumber: orderNumber,
             phone: phone,
             email: email,
         });
-        return successResponse(res, orders);
+        return (0, response_1.successResponse)(res, orders);
     }
     catch (error) {
         next(error);
@@ -32,11 +42,11 @@ export async function trackOrder(req, res, next) {
 /**
  * Get order by ID (public - limited info)
  */
-export async function getOrder(req, res, next) {
+async function getOrder(req, res, next) {
     try {
-        const order = await orderService.getOrderById(req.params.id);
+        const order = await order_service_1.orderService.getOrderById(req.params.id);
         // Return limited info for public access
-        return successResponse(res, {
+        return (0, response_1.successResponse)(res, {
             orderNumber: order.orderNumber,
             status: order.paymentStatus,
             deliveryStatus: order.deliveryStatus,
@@ -65,10 +75,10 @@ export async function getOrder(req, res, next) {
 /**
  * Get paginated list of orders (admin)
  */
-export async function getOrders(req, res, next) {
+async function getOrders(req, res, next) {
     try {
-        const { orders, total, page, limit } = await orderService.getOrders(req.query);
-        return paginatedResponse(res, orders, page, limit, total);
+        const { orders, total, page, limit } = await order_service_1.orderService.getOrders(req.query);
+        return (0, response_1.paginatedResponse)(res, orders, page, limit, total);
     }
     catch (error) {
         next(error);
@@ -77,10 +87,10 @@ export async function getOrders(req, res, next) {
 /**
  * Get order by ID (admin - full info)
  */
-export async function getOrderAdmin(req, res, next) {
+async function getOrderAdmin(req, res, next) {
     try {
-        const order = await orderService.getOrderById(req.params.id);
-        return successResponse(res, order);
+        const order = await order_service_1.orderService.getOrderById(req.params.id);
+        return (0, response_1.successResponse)(res, order);
     }
     catch (error) {
         next(error);
@@ -89,10 +99,10 @@ export async function getOrderAdmin(req, res, next) {
 /**
  * Update order status (admin)
  */
-export async function updateOrderStatus(req, res, next) {
+async function updateOrderStatus(req, res, next) {
     try {
-        const order = await orderService.updateOrderStatus(req.params.id, req.body);
-        return successResponse(res, order, 'Order status updated');
+        const order = await order_service_1.orderService.updateOrderStatus(req.params.id, req.body);
+        return (0, response_1.successResponse)(res, order, 'Order status updated');
     }
     catch (error) {
         next(error);
@@ -101,10 +111,10 @@ export async function updateOrderStatus(req, res, next) {
 /**
  * Mark order as shipped (admin)
  */
-export async function markAsShipped(req, res, next) {
+async function markAsShipped(req, res, next) {
     try {
-        const order = await orderService.markAsShipped(req.params.id, req.body);
-        return successResponse(res, order, 'Order marked as shipped');
+        const order = await order_service_1.orderService.markAsShipped(req.params.id, req.body);
+        return (0, response_1.successResponse)(res, order, 'Order marked as shipped');
     }
     catch (error) {
         next(error);
@@ -113,10 +123,10 @@ export async function markAsShipped(req, res, next) {
 /**
  * Generate invoice (admin)
  */
-export async function generateInvoice(req, res, next) {
+async function generateInvoice(req, res, next) {
     try {
-        const result = await orderService.generateInvoice(req.params.id);
-        return successResponse(res, result);
+        const result = await order_service_1.orderService.generateInvoice(req.params.id);
+        return (0, response_1.successResponse)(res, result);
     }
     catch (error) {
         next(error);

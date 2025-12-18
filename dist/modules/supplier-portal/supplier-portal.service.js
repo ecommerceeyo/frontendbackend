@@ -1,7 +1,13 @@
-import prisma from '../../config/database';
-import { slugify, parsePaginationParams } from '../../utils/helpers';
-import { NotFoundError } from '../../middleware/errorHandler';
-export class SupplierPortalService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.supplierPortalService = exports.SupplierPortalService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+class SupplierPortalService {
     /**
      * Get supplier dashboard stats
      */
@@ -12,49 +18,49 @@ export class SupplierPortalService {
         const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
         const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
         const [totalProducts, activeProducts, lowStockProducts, preorderProducts, todayOrders, pendingOrders, preorderPendingOrders, monthlyRevenue, lastMonthRevenue, recentOrders, preorderProductsList,] = await Promise.all([
-            prisma.product.count({ where: { supplierId } }),
-            prisma.product.count({ where: { supplierId, active: true } }),
-            prisma.product.count({
+            database_1.default.product.count({ where: { supplierId } }),
+            database_1.default.product.count({ where: { supplierId, active: true } }),
+            database_1.default.product.count({
                 where: {
                     supplierId,
                     active: true,
-                    stock: { lte: prisma.product.fields.lowStockThreshold },
+                    stock: { lte: database_1.default.product.fields.lowStockThreshold },
                 },
             }),
-            prisma.product.count({
+            database_1.default.product.count({
                 where: {
                     supplierId,
                     isPreorder: true,
                     active: true,
                 },
             }),
-            prisma.orderItem.count({
+            database_1.default.orderItem.count({
                 where: {
                     supplierId,
                     createdAt: { gte: today },
                 },
             }),
-            prisma.orderItem.count({
+            database_1.default.orderItem.count({
                 where: {
                     supplierId,
                     fulfillmentStatus: 'PENDING',
                 },
             }),
-            prisma.orderItem.count({
+            database_1.default.orderItem.count({
                 where: {
                     supplierId,
                     fulfillmentStatus: 'PENDING',
                     product: { isPreorder: true },
                 },
             }),
-            prisma.orderItem.aggregate({
+            database_1.default.orderItem.aggregate({
                 where: {
                     supplierId,
                     createdAt: { gte: thisMonth },
                 },
                 _sum: { totalPrice: true },
             }),
-            prisma.orderItem.aggregate({
+            database_1.default.orderItem.aggregate({
                 where: {
                     supplierId,
                     createdAt: {
@@ -64,7 +70,7 @@ export class SupplierPortalService {
                 },
                 _sum: { totalPrice: true },
             }),
-            prisma.orderItem.findMany({
+            database_1.default.orderItem.findMany({
                 where: { supplierId },
                 include: {
                     order: {
@@ -82,7 +88,7 @@ export class SupplierPortalService {
                 take: 5,
             }),
             // Get pre-order products with pending order counts
-            prisma.product.findMany({
+            database_1.default.product.findMany({
                 where: {
                     supplierId,
                     isPreorder: true,
@@ -149,7 +155,7 @@ export class SupplierPortalService {
      * Get supplier's products
      */
     async getProducts(supplierId, params) {
-        const { page, limit, skip, sortBy, sortOrder } = parsePaginationParams(params);
+        const { page, limit, skip, sortBy, sortOrder } = (0, helpers_1.parsePaginationParams)(params);
         const where = {
             supplierId,
         };
@@ -163,7 +169,7 @@ export class SupplierPortalService {
             ];
         }
         const [products, total] = await Promise.all([
-            prisma.product.findMany({
+            database_1.default.product.findMany({
                 where,
                 include: {
                     categories: {
@@ -175,7 +181,7 @@ export class SupplierPortalService {
                 skip,
                 take: limit,
             }),
-            prisma.product.count({ where }),
+            database_1.default.product.count({ where }),
         ]);
         return { products, total, page, limit };
     }
@@ -183,7 +189,7 @@ export class SupplierPortalService {
      * Get single product
      */
     async getProduct(supplierId, productId) {
-        const product = await prisma.product.findFirst({
+        const product = await database_1.default.product.findFirst({
             where: { id: productId, supplierId },
             include: {
                 categories: {
@@ -195,7 +201,7 @@ export class SupplierPortalService {
             },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         return product;
     }
@@ -203,14 +209,14 @@ export class SupplierPortalService {
      * Create a product for supplier
      */
     async createProduct(supplierId, data) {
-        const slug = data.slug || slugify(data.name);
-        const existingProduct = await prisma.product.findUnique({
+        const slug = data.slug || (0, helpers_1.slugify)(data.name);
+        const existingProduct = await database_1.default.product.findUnique({
             where: { slug },
         });
         if (existingProduct) {
             throw new Error('A product with this slug already exists');
         }
-        const product = await prisma.product.create({
+        const product = await database_1.default.product.create({
             data: {
                 supplierId,
                 name: data.name,
@@ -265,25 +271,25 @@ export class SupplierPortalService {
      * Update supplier's product
      */
     async updateProduct(supplierId, productId, data) {
-        const existingProduct = await prisma.product.findFirst({
+        const existingProduct = await database_1.default.product.findFirst({
             where: { id: productId, supplierId },
         });
         if (!existingProduct) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
         let slug = data.slug;
         if (data.name && !data.slug) {
-            slug = slugify(data.name);
+            slug = (0, helpers_1.slugify)(data.name);
         }
         if (slug && slug !== existingProduct.slug) {
-            const slugExists = await prisma.product.findFirst({
+            const slugExists = await database_1.default.product.findFirst({
                 where: { slug, NOT: { id: productId } },
             });
             if (slugExists) {
                 throw new Error('A product with this slug already exists');
             }
         }
-        const product = await prisma.$transaction(async (tx) => {
+        const product = await database_1.default.$transaction(async (tx) => {
             if (data.categoryIds !== undefined) {
                 await tx.productCategory.deleteMany({ where: { productId } });
                 if (data.categoryIds.length > 0) {
@@ -352,20 +358,20 @@ export class SupplierPortalService {
      * Delete supplier's product
      */
     async deleteProduct(supplierId, productId) {
-        const product = await prisma.product.findFirst({
+        const product = await database_1.default.product.findFirst({
             where: { id: productId, supplierId },
         });
         if (!product) {
-            throw new NotFoundError('Product');
+            throw new errorHandler_1.NotFoundError('Product');
         }
-        await prisma.product.delete({ where: { id: productId } });
+        await database_1.default.product.delete({ where: { id: productId } });
         return { success: true };
     }
     /**
      * Get supplier's orders (order items)
      */
     async getOrders(supplierId, params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = {
             supplierId,
         };
@@ -381,7 +387,7 @@ export class SupplierPortalService {
             };
         }
         const [orderItems, total] = await Promise.all([
-            prisma.orderItem.findMany({
+            database_1.default.orderItem.findMany({
                 where,
                 include: {
                     order: {
@@ -407,7 +413,7 @@ export class SupplierPortalService {
                 skip,
                 take: limit,
             }),
-            prisma.orderItem.count({ where }),
+            database_1.default.orderItem.count({ where }),
         ]);
         return { orderItems, total, page, limit };
     }
@@ -415,7 +421,7 @@ export class SupplierPortalService {
      * Get single order item
      */
     async getOrderItem(supplierId, orderItemId) {
-        const orderItem = await prisma.orderItem.findFirst({
+        const orderItem = await database_1.default.orderItem.findFirst({
             where: { id: orderItemId, supplierId },
             include: {
                 order: true,
@@ -427,7 +433,7 @@ export class SupplierPortalService {
             },
         });
         if (!orderItem) {
-            throw new NotFoundError('Order item');
+            throw new errorHandler_1.NotFoundError('Order item');
         }
         return orderItem;
     }
@@ -435,11 +441,11 @@ export class SupplierPortalService {
      * Update fulfillment status
      */
     async updateFulfillmentStatus(supplierId, orderItemId, status, trackingNumber) {
-        const orderItem = await prisma.orderItem.findFirst({
+        const orderItem = await database_1.default.orderItem.findFirst({
             where: { id: orderItemId, supplierId },
         });
         if (!orderItem) {
-            throw new NotFoundError('Order item');
+            throw new errorHandler_1.NotFoundError('Order item');
         }
         const updates = {
             fulfillmentStatus: status,
@@ -453,7 +459,7 @@ export class SupplierPortalService {
         else if (status === 'DELIVERED') {
             updates.deliveredAt = new Date();
         }
-        const updatedItem = await prisma.orderItem.update({
+        const updatedItem = await database_1.default.orderItem.update({
             where: { id: orderItemId },
             data: updates,
             include: {
@@ -468,18 +474,18 @@ export class SupplierPortalService {
      * Get supplier's payouts
      */
     async getPayouts(supplierId, params) {
-        const { page, limit, skip } = parsePaginationParams(params);
+        const { page, limit, skip } = (0, helpers_1.parsePaginationParams)(params);
         const where = {
             supplierId,
         };
         const [payouts, total] = await Promise.all([
-            prisma.supplierPayout.findMany({
+            database_1.default.supplierPayout.findMany({
                 where,
                 orderBy: { createdAt: 'desc' },
                 skip,
                 take: limit,
             }),
-            prisma.supplierPayout.count({ where }),
+            database_1.default.supplierPayout.count({ where }),
         ]);
         return { payouts, total, page, limit };
     }
@@ -487,7 +493,7 @@ export class SupplierPortalService {
      * Update supplier profile
      */
     async updateProfile(supplierId, data) {
-        const supplier = await prisma.supplier.update({
+        const supplier = await database_1.default.supplier.update({
             where: { id: supplierId },
             data,
         });
@@ -497,7 +503,7 @@ export class SupplierPortalService {
      * Get supplier profile
      */
     async getProfile(supplierId) {
-        const supplier = await prisma.supplier.findUnique({
+        const supplier = await database_1.default.supplier.findUnique({
             where: { id: supplierId },
             include: {
                 _count: {
@@ -509,10 +515,11 @@ export class SupplierPortalService {
             },
         });
         if (!supplier) {
-            throw new NotFoundError('Supplier');
+            throw new errorHandler_1.NotFoundError('Supplier');
         }
         return supplier;
     }
 }
-export const supplierPortalService = new SupplierPortalService();
+exports.SupplierPortalService = SupplierPortalService;
+exports.supplierPortalService = new SupplierPortalService();
 //# sourceMappingURL=supplier-portal.service.js.map

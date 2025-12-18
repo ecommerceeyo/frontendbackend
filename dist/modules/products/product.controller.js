@@ -1,12 +1,26 @@
-import { productService } from './product.service';
-import { successResponse, paginatedResponse } from '../../utils/response';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getProducts = getProducts;
+exports.getProduct = getProduct;
+exports.getFeaturedProducts = getFeaturedProducts;
+exports.createProduct = createProduct;
+exports.updateProduct = updateProduct;
+exports.deleteProduct = deleteProduct;
+exports.updateProductStock = updateProductStock;
+exports.bulkUpdateStock = bulkUpdateStock;
+exports.getLowStockProducts = getLowStockProducts;
+exports.getInventoryLogs = getInventoryLogs;
+exports.getProductAdmin = getProductAdmin;
+exports.getProductsAdmin = getProductsAdmin;
+const product_service_1 = require("./product.service");
+const response_1 = require("../../utils/response");
 /**
  * Get paginated list of products (public)
  */
-export async function getProducts(req, res, next) {
+async function getProducts(req, res, next) {
     try {
-        const { products, total, page, limit } = await productService.getProducts(req.query);
-        return paginatedResponse(res, products, page, limit, total);
+        const { products, total, page, limit } = await product_service_1.productService.getProducts(req.query);
+        return (0, response_1.paginatedResponse)(res, products, page, limit, total);
     }
     catch (error) {
         next(error);
@@ -15,10 +29,10 @@ export async function getProducts(req, res, next) {
 /**
  * Get single product by ID or slug (public)
  */
-export async function getProduct(req, res, next) {
+async function getProduct(req, res, next) {
     try {
-        const product = await productService.getProductByIdOrSlug(req.params.id);
-        return successResponse(res, product);
+        const product = await product_service_1.productService.getProductByIdOrSlug(req.params.id);
+        return (0, response_1.successResponse)(res, product);
     }
     catch (error) {
         next(error);
@@ -27,11 +41,11 @@ export async function getProduct(req, res, next) {
 /**
  * Get featured products (public)
  */
-export async function getFeaturedProducts(req, res, next) {
+async function getFeaturedProducts(req, res, next) {
     try {
         const limit = parseInt(req.query.limit) || 8;
-        const products = await productService.getFeaturedProducts(limit);
-        return successResponse(res, products);
+        const products = await product_service_1.productService.getFeaturedProducts(limit);
+        return (0, response_1.successResponse)(res, products);
     }
     catch (error) {
         next(error);
@@ -40,10 +54,10 @@ export async function getFeaturedProducts(req, res, next) {
 /**
  * Create a new product (admin)
  */
-export async function createProduct(req, res, next) {
+async function createProduct(req, res, next) {
     try {
-        const product = await productService.createProduct(req.body);
-        return successResponse(res, product, 'Product created successfully', 201);
+        const product = await product_service_1.productService.createProduct(req.body);
+        return (0, response_1.successResponse)(res, product, 'Product created successfully', 201);
     }
     catch (error) {
         next(error);
@@ -52,10 +66,10 @@ export async function createProduct(req, res, next) {
 /**
  * Update a product (admin)
  */
-export async function updateProduct(req, res, next) {
+async function updateProduct(req, res, next) {
     try {
-        const product = await productService.updateProduct(req.params.id, req.body);
-        return successResponse(res, product, 'Product updated successfully');
+        const product = await product_service_1.productService.updateProduct(req.params.id, req.body);
+        return (0, response_1.successResponse)(res, product, 'Product updated successfully');
     }
     catch (error) {
         next(error);
@@ -64,10 +78,10 @@ export async function updateProduct(req, res, next) {
 /**
  * Delete a product (admin)
  */
-export async function deleteProduct(req, res, next) {
+async function deleteProduct(req, res, next) {
     try {
-        await productService.deleteProduct(req.params.id);
-        return successResponse(res, null, 'Product deleted successfully');
+        await product_service_1.productService.deleteProduct(req.params.id);
+        return (0, response_1.successResponse)(res, null, 'Product deleted successfully');
     }
     catch (error) {
         next(error);
@@ -76,11 +90,11 @@ export async function deleteProduct(req, res, next) {
 /**
  * Update product stock (admin)
  */
-export async function updateProductStock(req, res, next) {
+async function updateProductStock(req, res, next) {
     try {
         const { stock, reason } = req.body;
-        const product = await productService.updateStock(req.params.id, stock, reason);
-        return successResponse(res, product, 'Stock updated successfully');
+        const product = await product_service_1.productService.updateStock(req.params.id, stock, reason);
+        return (0, response_1.successResponse)(res, product, 'Stock updated successfully');
     }
     catch (error) {
         next(error);
@@ -89,11 +103,11 @@ export async function updateProductStock(req, res, next) {
 /**
  * Bulk update stock (admin)
  */
-export async function bulkUpdateStock(req, res, next) {
+async function bulkUpdateStock(req, res, next) {
     try {
         const { updates } = req.body;
-        const results = await productService.bulkUpdateStock(updates);
-        return successResponse(res, results, 'Stock updated successfully');
+        const results = await product_service_1.productService.bulkUpdateStock(updates);
+        return (0, response_1.successResponse)(res, results, 'Stock updated successfully');
     }
     catch (error) {
         next(error);
@@ -102,10 +116,10 @@ export async function bulkUpdateStock(req, res, next) {
 /**
  * Get low stock products (admin)
  */
-export async function getLowStockProducts(req, res, next) {
+async function getLowStockProducts(req, res, next) {
     try {
-        const products = await productService.getLowStockProducts();
-        return successResponse(res, products);
+        const products = await product_service_1.productService.getLowStockProducts();
+        return (0, response_1.successResponse)(res, products);
     }
     catch (error) {
         next(error);
@@ -114,16 +128,16 @@ export async function getLowStockProducts(req, res, next) {
 /**
  * Get inventory logs (admin)
  */
-export async function getInventoryLogs(req, res, next) {
+async function getInventoryLogs(req, res, next) {
     try {
         const { page, limit, productId, reason } = req.query;
-        const result = await productService.getInventoryLogs({
+        const result = await product_service_1.productService.getInventoryLogs({
             page: page ? Number(page) : undefined,
             limit: limit ? Number(limit) : undefined,
             productId: productId,
             reason: reason,
         });
-        return paginatedResponse(res, result.logs, result.page, result.limit, result.total);
+        return (0, response_1.paginatedResponse)(res, result.logs, result.page, result.limit, result.total);
     }
     catch (error) {
         next(error);
@@ -132,10 +146,10 @@ export async function getInventoryLogs(req, res, next) {
 /**
  * Get product by ID (admin - includes inactive)
  */
-export async function getProductAdmin(req, res, next) {
+async function getProductAdmin(req, res, next) {
     try {
-        const product = await productService.getProductById(req.params.id);
-        return successResponse(res, product);
+        const product = await product_service_1.productService.getProductById(req.params.id);
+        return (0, response_1.successResponse)(res, product);
     }
     catch (error) {
         next(error);
@@ -144,11 +158,11 @@ export async function getProductAdmin(req, res, next) {
 /**
  * Get all products (admin - includes inactive)
  */
-export async function getProductsAdmin(req, res, next) {
+async function getProductsAdmin(req, res, next) {
     try {
         const params = { ...req.query, includeInactive: true };
-        const { products, total, page, limit } = await productService.getProducts(params);
-        return paginatedResponse(res, products, page, limit, total);
+        const { products, total, page, limit } = await product_service_1.productService.getProducts(params);
+        return (0, response_1.paginatedResponse)(res, products, page, limit, total);
     }
     catch (error) {
         next(error);

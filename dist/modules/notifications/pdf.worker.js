@@ -1,42 +1,49 @@
-import { Worker } from 'bullmq';
-import { connection } from '../../config/queue';
-import logger from '../../utils/logger';
-import { pdfService } from '../pdf/pdf.service';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.pdfWorker = void 0;
+exports.startPdfWorker = startPdfWorker;
+const bullmq_1 = require("bullmq");
+const queue_1 = require("../../config/queue");
+const logger_1 = __importDefault(require("../../utils/logger"));
+const pdf_service_1 = require("../pdf/pdf.service");
 // Process PDF generation job
 async function processPdf(job) {
     const { type, orderId } = job.data;
-    logger.info(`Processing PDF job ${job.id} - Type: ${type}, OrderId: ${orderId}`);
+    logger_1.default.info(`Processing PDF job ${job.id} - Type: ${type}, OrderId: ${orderId}`);
     try {
         let url;
         if (type === 'invoice') {
-            url = await pdfService.generateInvoice(orderId);
+            url = await pdf_service_1.pdfService.generateInvoice(orderId);
         }
         else {
-            url = await pdfService.generateDeliveryNote(orderId);
+            url = await pdf_service_1.pdfService.generateDeliveryNote(orderId);
         }
-        logger.info(`PDF generated and uploaded: ${job.id}, URL: ${url}`);
+        logger_1.default.info(`PDF generated and uploaded: ${job.id}, URL: ${url}`);
     }
     catch (error) {
-        logger.error(`PDF generation failed: ${job.id}`, error);
+        logger_1.default.error(`PDF generation failed: ${job.id}`, error);
         throw error;
     }
 }
 // Create and export worker
-export const pdfWorker = new Worker('pdf', processPdf, {
-    connection,
+exports.pdfWorker = new bullmq_1.Worker('pdf', processPdf, {
+    connection: queue_1.connection,
     concurrency: 2,
 });
 // Worker event handlers
-pdfWorker.on('completed', (job) => {
-    logger.info(`PDF job ${job.id} completed`);
+exports.pdfWorker.on('completed', (job) => {
+    logger_1.default.info(`PDF job ${job.id} completed`);
 });
-pdfWorker.on('failed', (job, err) => {
-    logger.error(`PDF job ${job?.id} failed:`, err);
+exports.pdfWorker.on('failed', (job, err) => {
+    logger_1.default.error(`PDF job ${job?.id} failed:`, err);
 });
-pdfWorker.on('error', (err) => {
-    logger.error('PDF worker error:', err);
+exports.pdfWorker.on('error', (err) => {
+    logger_1.default.error('PDF worker error:', err);
 });
-export function startPdfWorker() {
-    logger.info('PDF worker started');
+function startPdfWorker() {
+    logger_1.default.info('PDF worker started');
 }
 //# sourceMappingURL=pdf.worker.js.map

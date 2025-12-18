@@ -1,62 +1,65 @@
-import { z } from 'zod';
-import { paginationSchema, priceSchema, currencySchema } from './common';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateSpecificationSchema = exports.addSpecificationSchema = exports.bulkUpdateStockSchema = exports.adminProductListQuerySchema = exports.productListQuerySchema = exports.updateProductSchema = exports.createProductSchema = exports.productImageSchema = exports.productSpecificationSchema = void 0;
+const zod_1 = require("zod");
+const common_1 = require("./common");
 // Product specification schema
-export const productSpecificationSchema = z.object({
-    key: z.string().min(1, 'Specification key is required'),
-    value: z.string().min(1, 'Specification value is required'),
-    group: z.string().optional(),
-    sortOrder: z.number().int().default(0),
+exports.productSpecificationSchema = zod_1.z.object({
+    key: zod_1.z.string().min(1, 'Specification key is required'),
+    value: zod_1.z.string().min(1, 'Specification value is required'),
+    group: zod_1.z.string().optional(),
+    sortOrder: zod_1.z.number().int().default(0),
 });
 // Product image schema
-export const productImageSchema = z.object({
-    url: z.string().url('Invalid image URL'),
-    publicId: z.string().min(1, 'Public ID is required'),
-    alt: z.string().optional(),
-    sortOrder: z.number().int().default(0),
-    isPrimary: z.boolean().default(false),
+exports.productImageSchema = zod_1.z.object({
+    url: zod_1.z.string().url('Invalid image URL'),
+    publicId: zod_1.z.string().min(1, 'Public ID is required'),
+    alt: zod_1.z.string().optional(),
+    sortOrder: zod_1.z.number().int().default(0),
+    isPrimary: zod_1.z.boolean().default(false),
 });
 // Create product schema
-export const createProductSchema = z.object({
-    name: z.string().min(1, 'Name is required').max(255),
-    slug: z.string().optional(),
-    description: z.string().optional(),
-    price: priceSchema,
-    currency: currencySchema,
-    comparePrice: priceSchema.optional(),
-    sku: z.string().optional(),
-    stock: z.coerce.number().int().min(0).default(0),
-    lowStockThreshold: z.coerce.number().int().min(0).default(5),
-    categoryIds: z.array(z.string()).optional(),
-    images: z.array(productImageSchema).max(6, 'Maximum 6 images allowed').optional(),
-    specifications: z.array(productSpecificationSchema).optional(),
-    active: z.boolean().default(true),
-    featured: z.boolean().default(false),
+exports.createProductSchema = zod_1.z.object({
+    name: zod_1.z.string().min(1, 'Name is required').max(255),
+    slug: zod_1.z.string().optional(),
+    description: zod_1.z.string().optional(),
+    price: common_1.priceSchema,
+    currency: common_1.currencySchema,
+    comparePrice: common_1.priceSchema.optional(),
+    sku: zod_1.z.string().optional(),
+    stock: zod_1.z.coerce.number().int().min(0).default(0),
+    lowStockThreshold: zod_1.z.coerce.number().int().min(0).default(5),
+    categoryIds: zod_1.z.array(zod_1.z.string()).optional(),
+    images: zod_1.z.array(exports.productImageSchema).max(6, 'Maximum 6 images allowed').optional(),
+    specifications: zod_1.z.array(exports.productSpecificationSchema).optional(),
+    active: zod_1.z.boolean().default(true),
+    featured: zod_1.z.boolean().default(false),
 });
 // Update product schema
-export const updateProductSchema = createProductSchema.partial();
+exports.updateProductSchema = exports.createProductSchema.partial();
 // Product list query schema
-export const productListQuerySchema = paginationSchema.extend({
-    category: z.string().optional(),
-    minPrice: z.coerce.number().optional(),
-    maxPrice: z.coerce.number().optional(),
-    inStock: z.coerce.boolean().optional(),
-    featured: z.coerce.boolean().optional(),
-    active: z.coerce.boolean().optional(),
-    search: z.string().optional(),
+exports.productListQuerySchema = common_1.paginationSchema.extend({
+    category: zod_1.z.string().optional(),
+    minPrice: zod_1.z.coerce.number().optional(),
+    maxPrice: zod_1.z.coerce.number().optional(),
+    inStock: zod_1.z.coerce.boolean().optional(),
+    featured: zod_1.z.coerce.boolean().optional(),
+    active: zod_1.z.coerce.boolean().optional(),
+    search: zod_1.z.string().optional(),
 });
 // Admin product list query schema
-export const adminProductListQuerySchema = productListQuerySchema.extend({
-    includeInactive: z.coerce.boolean().optional().default(true),
+exports.adminProductListQuerySchema = exports.productListQuerySchema.extend({
+    includeInactive: zod_1.z.coerce.boolean().optional().default(true),
 });
 // Bulk update stock schema
-export const bulkUpdateStockSchema = z.object({
-    updates: z.array(z.object({
-        productId: z.string().min(1),
-        stock: z.coerce.number().int().min(0),
+exports.bulkUpdateStockSchema = zod_1.z.object({
+    updates: zod_1.z.array(zod_1.z.object({
+        productId: zod_1.z.string().min(1),
+        stock: zod_1.z.coerce.number().int().min(0),
     })),
 });
 // Add specification schema
-export const addSpecificationSchema = productSpecificationSchema;
+exports.addSpecificationSchema = exports.productSpecificationSchema;
 // Update specification schema
-export const updateSpecificationSchema = productSpecificationSchema.partial();
+exports.updateSpecificationSchema = exports.productSpecificationSchema.partial();
 //# sourceMappingURL=product.js.map

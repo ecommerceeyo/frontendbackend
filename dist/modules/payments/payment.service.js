@@ -1,37 +1,43 @@
-import prisma from '../../config/database';
-import config from '../../config';
-import { PaymentStatus } from '@prisma/client';
-import { generateTransactionId } from '../../utils/helpers';
-import { NotFoundError, AppError } from '../../middleware/errorHandler';
-import { emailQueue, smsQueue, pdfQueue } from '../../config/queue';
-import logger from '../../utils/logger';
-export class PaymentService {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.paymentService = exports.PaymentService = void 0;
+const database_1 = __importDefault(require("../../config/database"));
+const config_1 = __importDefault(require("../../config"));
+const client_1 = require("@prisma/client");
+const helpers_1 = require("../../utils/helpers");
+const errorHandler_1 = require("../../middleware/errorHandler");
+const queue_1 = require("../../config/queue");
+const logger_1 = __importDefault(require("../../utils/logger"));
+class PaymentService {
     /**
      * Initiate mobile money payment
      */
     async initiatePayment(orderId, phoneNumber, provider = 'MTN_MOMO') {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
             include: { payment: true },
         });
         if (!order) {
-            throw new NotFoundError('Order');
+            throw new errorHandler_1.NotFoundError('Order');
         }
         if (!order.payment) {
-            throw new AppError('Payment record not found', 400);
+            throw new errorHandler_1.AppError('Payment record not found', 400);
         }
-        if (order.payment.status === PaymentStatus.PAID) {
-            throw new AppError('Order has already been paid', 400);
+        if (order.payment.status === client_1.PaymentStatus.PAID) {
+            throw new errorHandler_1.AppError('Order has already been paid', 400);
         }
-        const transactionId = generateTransactionId();
+        const transactionId = (0, helpers_1.generateTransactionId)();
         // Update payment with transaction ID
-        await prisma.payment.update({
+        await database_1.default.payment.update({
             where: { id: order.payment.id },
             data: {
                 transactionId,
                 provider,
                 phoneNumber,
-                status: PaymentStatus.PENDING,
+                status: client_1.PaymentStatus.PENDING,
             },
         });
         // Call MTN MoMo API (simplified - in production, use proper SDK)
@@ -48,7 +54,7 @@ export class PaymentService {
                 payeeNote: `Order ${order.orderNumber}`,
             });
             // Update payment with provider reference
-            await prisma.payment.update({
+            await database_1.default.payment.update({
                 where: { id: order.payment.id },
                 data: {
                     providerReference: momoResponse.referenceId,
@@ -62,33 +68,33 @@ export class PaymentService {
             };
         }
         catch (error) {
-            logger.error('MoMo API error:', error);
+            logger_1.default.error('MoMo API error:', error);
             // Update payment status to failed
-            await prisma.payment.update({
+            await database_1.default.payment.update({
                 where: { id: order.payment.id },
                 data: {
-                    status: PaymentStatus.FAILED,
+                    status: client_1.PaymentStatus.FAILED,
                     failedAt: new Date(),
                     failedReason: error instanceof Error ? error.message : 'Payment initiation failed',
                 },
             });
-            throw new AppError('Failed to initiate payment. Please try again.', 500);
+            throw new errorHandler_1.AppError('Failed to initiate payment. Please try again.', 500);
         }
     }
     /**
      * Handle payment webhook from mobile money provider
      */
     async handleWebhook(payload) {
-        const payment = await prisma.payment.findUnique({
+        const payment = await database_1.default.payment.findUnique({
             where: { transactionId: payload.externalId },
             include: { order: true },
         });
         if (!payment) {
-            logger.warn(`Payment not found for transaction: ${payload.externalId}`);
-            throw new NotFoundError('Payment');
+            logger_1.default.warn(`Payment not found for transaction: ${payload.externalId}`);
+            throw new errorHandler_1.NotFoundError('Payment');
         }
         // Log webhook payload
-        await prisma.payment.update({
+        await database_1.default.payment.update({
             where: { id: payment.id },
             data: {
                 webhookPayload: payload,
@@ -97,23 +103,23 @@ export class PaymentService {
         let newStatus;
         switch (payload.status) {
             case 'SUCCESSFUL':
-                newStatus = PaymentStatus.PAID;
+                newStatus = client_1.PaymentStatus.PAID;
                 break;
             case 'FAILED':
-                newStatus = PaymentStatus.FAILED;
+                newStatus = client_1.PaymentStatus.FAILED;
                 break;
             default:
-                newStatus = PaymentStatus.PENDING;
+                newStatus = client_1.PaymentStatus.PENDING;
         }
         // Update payment and order
-        await prisma.$transaction(async (tx) => {
+        await database_1.default.$transaction(async (tx) => {
             await tx.payment.update({
                 where: { id: payment.id },
                 data: {
                     status: newStatus,
                     providerReference: payload.financialTransactionId || payment.providerReference,
-                    paidAt: newStatus === PaymentStatus.PAID ? new Date() : undefined,
-                    failedAt: newStatus === PaymentStatus.FAILED ? new Date() : undefined,
+                    paidAt: newStatus === client_1.PaymentStatus.PAID ? new Date() : undefined,
+                    failedAt: newStatus === client_1.PaymentStatus.FAILED ? new Date() : undefined,
                     failedReason: payload.reason,
                 },
             });
@@ -125,10 +131,10 @@ export class PaymentService {
             });
         });
         // Queue notifications based on status
-        if (newStatus === PaymentStatus.PAID) {
+        if (newStatus === client_1.PaymentStatus.PAID) {
             await this.onPaymentSuccess(payment.orderId);
         }
-        else if (newStatus === PaymentStatus.FAILED) {
+        else if (newStatus === client_1.PaymentStatus.FAILED) {
             await this.onPaymentFailure(payment.orderId, payload.reason);
         }
         return { success: true, status: newStatus };
@@ -137,15 +143,15 @@ export class PaymentService {
      * Verify payment status
      */
     async verifyPayment(transactionId) {
-        const payment = await prisma.payment.findUnique({
+        const payment = await database_1.default.payment.findUnique({
             where: { transactionId },
             include: { order: true },
         });
         if (!payment) {
-            throw new NotFoundError('Payment');
+            throw new errorHandler_1.NotFoundError('Payment');
         }
         // If already completed, return current status
-        if (payment.status !== PaymentStatus.PENDING) {
+        if (payment.status !== client_1.PaymentStatus.PENDING) {
             return {
                 transactionId,
                 status: payment.status,
@@ -167,14 +173,14 @@ export class PaymentService {
             }
             return {
                 transactionId,
-                status: momoStatus.status === 'SUCCESSFUL' ? PaymentStatus.PAID :
-                    momoStatus.status === 'FAILED' ? PaymentStatus.FAILED : PaymentStatus.PENDING,
+                status: momoStatus.status === 'SUCCESSFUL' ? client_1.PaymentStatus.PAID :
+                    momoStatus.status === 'FAILED' ? client_1.PaymentStatus.FAILED : client_1.PaymentStatus.PENDING,
                 amount: payment.amount,
                 currency: payment.currency,
             };
         }
         catch (error) {
-            logger.error('Error verifying payment:', error);
+            logger_1.default.error('Error verifying payment:', error);
             return {
                 transactionId,
                 status: payment.status,
@@ -189,21 +195,21 @@ export class PaymentService {
     async callMomoApi(data) {
         // In production, use proper MTN MoMo SDK
         // This is a simplified mock implementation
-        if (config.nodeEnv === 'development' || config.momo.environment === 'sandbox') {
+        if (config_1.default.nodeEnv === 'development' || config_1.default.momo.environment === 'sandbox') {
             // Simulate API call in development
-            logger.info('MoMo API call (simulated):', data);
+            logger_1.default.info('MoMo API call (simulated):', data);
             return {
                 referenceId: `MOMO-${Date.now()}`,
             };
         }
         // Production API call would go here
-        const response = await fetch(`${config.momo.baseUrl}/collection/v1_0/requesttopay`, {
+        const response = await fetch(`${config_1.default.momo.baseUrl}/collection/v1_0/requesttopay`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${await this.getMomoAccessToken()}`,
                 'X-Reference-Id': data.externalId,
-                'X-Target-Environment': config.momo.environment,
-                'Ocp-Apim-Subscription-Key': config.momo.subscriptionKey,
+                'X-Target-Environment': config_1.default.momo.environment,
+                'Ocp-Apim-Subscription-Key': config_1.default.momo.subscriptionKey,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
@@ -217,19 +223,19 @@ export class PaymentService {
      * Check MoMo payment status
      */
     async checkMomoStatus(referenceId) {
-        if (config.nodeEnv === 'development' || config.momo.environment === 'sandbox') {
+        if (config_1.default.nodeEnv === 'development' || config_1.default.momo.environment === 'sandbox') {
             // Simulate successful payment in development
             return {
                 status: 'SUCCESSFUL',
                 financialTransactionId: `FT-${Date.now()}`,
             };
         }
-        const response = await fetch(`${config.momo.baseUrl}/collection/v1_0/requesttopay/${referenceId}`, {
+        const response = await fetch(`${config_1.default.momo.baseUrl}/collection/v1_0/requesttopay/${referenceId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${await this.getMomoAccessToken()}`,
-                'X-Target-Environment': config.momo.environment,
-                'Ocp-Apim-Subscription-Key': config.momo.subscriptionKey,
+                'X-Target-Environment': config_1.default.momo.environment,
+                'Ocp-Apim-Subscription-Key': config_1.default.momo.subscriptionKey,
             },
         });
         if (!response.ok) {
@@ -247,12 +253,12 @@ export class PaymentService {
      */
     async getMomoAccessToken() {
         // In production, implement proper token caching
-        const credentials = Buffer.from(`${config.momo.apiUser}:${config.momo.apiKey}`).toString('base64');
-        const response = await fetch(`${config.momo.baseUrl}/collection/token/`, {
+        const credentials = Buffer.from(`${config_1.default.momo.apiUser}:${config_1.default.momo.apiKey}`).toString('base64');
+        const response = await fetch(`${config_1.default.momo.baseUrl}/collection/token/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${credentials}`,
-                'Ocp-Apim-Subscription-Key': config.momo.subscriptionKey,
+                'Ocp-Apim-Subscription-Key': config_1.default.momo.subscriptionKey,
             },
         });
         if (!response.ok) {
@@ -265,25 +271,25 @@ export class PaymentService {
      * Handle successful payment
      */
     async onPaymentSuccess(orderId) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
         });
         if (!order)
             return;
         // Generate invoice
-        await pdfQueue.add('generate-invoice', {
+        await queue_1.pdfQueue.add('generate-invoice', {
             type: 'invoice',
             orderId,
         });
         // Send confirmation SMS
-        await smsQueue.add('payment-success', {
+        await queue_1.smsQueue.add('payment-success', {
             to: order.customerPhone,
             message: `Payment received for order ${order.orderNumber}. Total: ${order.total} ${order.currency}. Thank you for your purchase!`,
             orderId,
         });
         // Send confirmation email
         if (order.customerEmail) {
-            await emailQueue.add('payment-success', {
+            await queue_1.emailQueue.add('payment-success', {
                 to: order.customerEmail,
                 subject: `Payment Confirmed - ${order.orderNumber}`,
                 template: 'payment-success',
@@ -301,18 +307,19 @@ export class PaymentService {
      * Handle failed payment
      */
     async onPaymentFailure(orderId, reason) {
-        const order = await prisma.order.findUnique({
+        const order = await database_1.default.order.findUnique({
             where: { id: orderId },
         });
         if (!order)
             return;
         // Send failure notification
-        await smsQueue.add('payment-failed', {
+        await queue_1.smsQueue.add('payment-failed', {
             to: order.customerPhone,
             message: `Payment failed for order ${order.orderNumber}. ${reason || 'Please try again or contact support.'}`,
             orderId,
         });
     }
 }
-export const paymentService = new PaymentService();
+exports.PaymentService = PaymentService;
+exports.paymentService = new PaymentService();
 //# sourceMappingURL=payment.service.js.map

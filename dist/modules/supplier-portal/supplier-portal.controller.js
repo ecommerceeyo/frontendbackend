@@ -1,12 +1,15 @@
-import { supplierPortalService } from './supplier-portal.service';
-export class SupplierPortalController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.supplierPortalController = exports.SupplierPortalController = void 0;
+const supplier_portal_service_1 = require("./supplier-portal.service");
+class SupplierPortalController {
     /**
      * Get dashboard statistics
      */
     async getDashboard(req, res, next) {
         try {
             const supplierId = req.supplier?.id;
-            const stats = await supplierPortalService.getDashboardStats(supplierId);
+            const stats = await supplier_portal_service_1.supplierPortalService.getDashboardStats(supplierId);
             res.json({
                 success: true,
                 data: stats,
@@ -23,7 +26,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const { page, limit, search, active, sortBy, sortOrder } = req.query;
-            const result = await supplierPortalService.getProducts(supplierId, {
+            const result = await supplier_portal_service_1.supplierPortalService.getProducts(supplierId, {
                 page: page ? parseInt(page) : undefined,
                 limit: limit ? parseInt(limit) : undefined,
                 search,
@@ -55,7 +58,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const { productId } = req.params;
-            const product = await supplierPortalService.getProduct(supplierId, productId);
+            const product = await supplier_portal_service_1.supplierPortalService.getProduct(supplierId, productId);
             res.json({
                 success: true,
                 data: product,
@@ -72,7 +75,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const productData = req.body;
-            const product = await supplierPortalService.createProduct(supplierId, productData);
+            const product = await supplier_portal_service_1.supplierPortalService.createProduct(supplierId, productData);
             res.status(201).json({
                 success: true,
                 data: product,
@@ -91,7 +94,7 @@ export class SupplierPortalController {
             const supplierId = req.supplier?.id;
             const { productId } = req.params;
             const productData = req.body;
-            const product = await supplierPortalService.updateProduct(supplierId, productId, productData);
+            const product = await supplier_portal_service_1.supplierPortalService.updateProduct(supplierId, productId, productData);
             res.json({
                 success: true,
                 data: product,
@@ -108,7 +111,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const { productId } = req.params;
-            await supplierPortalService.deleteProduct(supplierId, productId);
+            await supplier_portal_service_1.supplierPortalService.deleteProduct(supplierId, productId);
             res.json({
                 success: true,
                 message: 'Product deleted successfully',
@@ -125,7 +128,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const { page, limit, status, search } = req.query;
-            const result = await supplierPortalService.getOrders(supplierId, {
+            const result = await supplier_portal_service_1.supplierPortalService.getOrders(supplierId, {
                 page: page ? parseInt(page) : undefined,
                 limit: limit ? parseInt(limit) : undefined,
                 status: status,
@@ -155,7 +158,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const { orderItemId } = req.params;
-            const orderItem = await supplierPortalService.getOrderItem(supplierId, orderItemId);
+            const orderItem = await supplier_portal_service_1.supplierPortalService.getOrderItem(supplierId, orderItemId);
             res.json({
                 success: true,
                 data: orderItem,
@@ -179,7 +182,7 @@ export class SupplierPortalController {
                     error: 'Status is required',
                 });
             }
-            const orderItem = await supplierPortalService.updateFulfillmentStatus(supplierId, orderItemId, status, trackingNumber);
+            const orderItem = await supplier_portal_service_1.supplierPortalService.updateFulfillmentStatus(supplierId, orderItemId, status, trackingNumber);
             res.json({
                 success: true,
                 data: orderItem,
@@ -196,7 +199,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const { page, limit } = req.query;
-            const result = await supplierPortalService.getPayouts(supplierId, {
+            const result = await supplier_portal_service_1.supplierPortalService.getPayouts(supplierId, {
                 page: page ? parseInt(page) : undefined,
                 limit: limit ? parseInt(limit) : undefined,
             });
@@ -223,7 +226,7 @@ export class SupplierPortalController {
     async getProfile(req, res, next) {
         try {
             const supplierId = req.supplier?.id;
-            const profile = await supplierPortalService.getProfile(supplierId);
+            const profile = await supplier_portal_service_1.supplierPortalService.getProfile(supplierId);
             res.json({
                 success: true,
                 data: profile,
@@ -240,7 +243,7 @@ export class SupplierPortalController {
         try {
             const supplierId = req.supplier?.id;
             const profileData = req.body;
-            const profile = await supplierPortalService.updateProfile(supplierId, profileData);
+            const profile = await supplier_portal_service_1.supplierPortalService.updateProfile(supplierId, profileData);
             res.json({
                 success: true,
                 data: profile,
@@ -251,5 +254,6 @@ export class SupplierPortalController {
         }
     }
 }
-export const supplierPortalController = new SupplierPortalController();
+exports.SupplierPortalController = SupplierPortalController;
+exports.supplierPortalController = new SupplierPortalController();
 //# sourceMappingURL=supplier-portal.controller.js.map
